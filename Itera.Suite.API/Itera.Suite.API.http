@@ -1,0 +1,6 @@
+@Itera.Suite.API_HostAddress = http://localhost:5145
+
+GET {{Itera.Suite.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
