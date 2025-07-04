@@ -1,0 +1,15 @@
+﻿@inherits LayoutComponentBase
+@using MudBlazor
+
+<MudThemeProvider>
+    <MudDialogProvider />
+    <MudSnackbarProvider />
+
+    <MudLayout>
+        <!-- Aqui poderia ter um MudAppBar ou MudDrawer se quiser -->
+
+        <MudMainContent>
+            @Body
+        </MudMainContent>
+    </MudLayout>
+</MudThemeProvider>

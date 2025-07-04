@@ -44,6 +44,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// CORS PARA PERMITIR O FRONT NO localhost:7142
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorClient", policy =>
+        policy.WithOrigins("https://localhost:7142")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 // REGISTRE SEU TOKEN SERVICE AQUI ⬇️
 builder.Services.AddScoped<TokenService>();
 
@@ -96,6 +105,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowBlazorClient");
 
 app.UseAuthentication();
 app.UseAuthorization();
