@@ -2,12 +2,12 @@
 
 public enum StatusItemDeCusto
 {
-    NaoDefinido = 0,
-    Orcado = 1,
+    Rascunho = 0,
+    Cotado = 1,
     Reservado = 2,
     Confirmado = 3,
-    ParcialmentePago = 4,
-    Pago = 5,
+    PagoParcialmente = 4,
+    PagoIntegralmente = 5,
     Cancelado = 6
 }
 

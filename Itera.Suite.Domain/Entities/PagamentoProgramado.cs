@@ -11,5 +11,7 @@ public class PagamentoProgramado
     public DateTime DataPrevista { get; set; }
     public decimal Valor { get; set; }
     public FormaPagamento Forma { get; set; }
-    public ICollection<ObservacaoPagamento> Observacoes { get; set; } = new List<ObservacaoPagamento>();
+    public ICollection<ObservacaoPagamentoProgramado> Observacoes { get; set; } = new List<ObservacaoPagamentoProgramado>();
+    public StatusPagamentoProgramado Status { get; set; }
+    public string? ComprovanteUrl { get; set; } // Ou path local, caso não use storage externo ainda
 }

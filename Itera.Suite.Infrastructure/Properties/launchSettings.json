@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Itera.Suite.Infrastructure": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:55843;http://localhost:55844"
+    }
+  }
+}

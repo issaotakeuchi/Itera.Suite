@@ -18,5 +18,4 @@ public class ProjetoDeViagem
     public StatusProjeto Status { get; set; }           // Planejado, Em execução, Concluído, Cancelado
     public ICollection<ItemDeCusto> ItensDeCusto { get; set; } = new List<ItemDeCusto>();
     public ICollection<ObservacaoProjeto> Observacoes { get; set; } = new List<ObservacaoProjeto>();
-
 }
