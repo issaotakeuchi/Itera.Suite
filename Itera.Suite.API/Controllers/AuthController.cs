@@ -1,4 +1,5 @@
-﻿using Itera.Suite.Domain.Identity;
+﻿using Itera.Suite.Application.DTOs.Auth;
+using Itera.Suite.Domain.Identity;
 using Itera.Suite.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -42,17 +43,26 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(string email, string password)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
             return Unauthorized("Usuário não encontrado.");
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Senha, false);
         if (!result.Succeeded)
             return Unauthorized("Senha inválida.");
 
         var token = _tokenService.GenerateToken(user);
-        return Ok(new { token });
+        return Ok(new LoginResponse
+        {
+            Sucesso = true,
+            Token = token,
+            Expiration = DateTime.UtcNow.AddHours(3),
+            UsuarioId = user.Id.ToString(),
+            Email = user.Email,
+            Roles = new List<string>() // preenche se tiver roles
+        });
+
     }
 }

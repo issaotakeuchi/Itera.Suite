@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itera.Suite.Infrastructure"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itera.Suite.Shared", "Itera.Suite.Shared\Itera.Suite.Shared.csproj", "{3F889A75-3282-44D6-A412-9C4BAA49AF18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itera.Suite.Front", "Front\Itera.Suite.Front.csproj", "{4121DAA2-087C-485F-96E0-DF09ABAA71D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itera.Suite.Front", "Itera.Suite.Front\Itera.Suite.Front.csproj", "{4F8BF890-E61B-4F48-99CE-DC3B77BB714A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{3F889A75-3282-44D6-A412-9C4BAA49AF18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F889A75-3282-44D6-A412-9C4BAA49AF18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F889A75-3282-44D6-A412-9C4BAA49AF18}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4121DAA2-087C-485F-96E0-DF09ABAA71D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4121DAA2-087C-485F-96E0-DF09ABAA71D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4121DAA2-087C-485F-96E0-DF09ABAA71D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4121DAA2-087C-485F-96E0-DF09ABAA71D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F8BF890-E61B-4F48-99CE-DC3B77BB714A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F8BF890-E61B-4F48-99CE-DC3B77BB714A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F8BF890-E61B-4F48-99CE-DC3B77BB714A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F8BF890-E61B-4F48-99CE-DC3B77BB714A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

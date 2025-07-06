@@ -1,0 +1,82 @@
+﻿@page "/login"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@using Radzen
+
+<h3>Login</h3>
+
+<RadzenTemplateForm Data="@loginModel" TItem="LoginRequest" Submit="@LoginAsync">
+    <div class="row">
+        <div class="col-md-6">
+            <RadzenTextBox @bind-Value="loginModel.Email" Name="Email" Placeholder="Email" Style="width:100%" />
+            <ValidationMessage For="@(() => loginModel.Email)" />
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <div class="col-md-6">
+            <RadzenPassword @bind-Value="loginModel.Senha" Name="Senha" Placeholder="Senha" Style="width:100%" />
+            <ValidationMessage For="@(() => loginModel.Senha)" />
+        </div>
+    </div>
+    <div class="row" style="margin-top:20px;">
+        <div class="col-md-6">
+            <RadzenButton Text="Entrar" Click="@LoginAsync" ButtonStyle="ButtonStyle.Primary" Type="Submit" Style="width:100%" />
+        </div>
+    </div>
+</RadzenTemplateForm>
+
+<RadzenNotification />
+
+@code {
+    [Inject] NotificationService NotificationService { get; set; }
+
+    LoginRequest loginModel = new();
+
+    private async Task LoginAsync()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("https://localhost:5146/api/auth/login", loginModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+                if (result.Sucesso)
+                {
+                    // Salva o token no LocalStorage ou SessionStorage
+                    await JS.InvokeVoidAsync("localStorage.setItem", "authToken", result.Token);
+
+                    NotificationService.Notify(NotificationSeverity.Success, "Sucesso", "Login efetuado com sucesso!");
+
+                    // Redireciona pra página principal ou dashboard
+                    Navigation.NavigateTo("/");
+                }
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Erro", "Usuário ou senha inválidos.");
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Erro", $"Exceção: {ex.Message}");
+        }
+    }
+
+    [Inject] IJSRuntime JS { get; set; }
+}
+
+@code {
+    public class LoginRequest
+    {
+        public string Email { get; set; }
+        public string Senha { get; set; }
+    }
+
+    public class LoginResponse
+    {
+        public bool Sucesso { get; set; }
+        public string Token { get; set; }
+    }
+}

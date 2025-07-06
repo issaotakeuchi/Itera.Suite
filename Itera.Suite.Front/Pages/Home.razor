@@ -1,0 +1,15 @@
+﻿@page "/"
+@using Radzen
+
+<h3>Radzen Teste</h3>
+
+<RadzenButton Text="Clique aqui!" Style="margin-bottom: 20px" Click="@(() => ShowNotification())" />
+
+@code {
+    [Inject] NotificationService NotificationService { get; set; }
+
+    void ShowNotification()
+    {
+        NotificationService.Notify(NotificationSeverity.Success, "Sucesso", "Primeiro botão funcionando!");
+    }
+}
