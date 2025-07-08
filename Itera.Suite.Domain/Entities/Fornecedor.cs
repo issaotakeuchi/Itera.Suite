@@ -9,10 +9,12 @@ public class Fornecedor
     public string Contato { get; set; }
     public string Email { get; set; }
     public string Telefone { get; set; }
-
     public TipoServico TipoDeServico { get; set; }
-
     public bool Ativo { get; set; } = true;
+    public string CriadoPor { get; set; }
+    public DateTime DataCriacao { get; set; }
+    public string AtualizadoPor { get; set; }
+    public DateTime? DataAtualizacao { get; set; }
 
     public ICollection<ItemDeCusto> ItensDeCusto { get; set; } = new List<ItemDeCusto>();
 }
