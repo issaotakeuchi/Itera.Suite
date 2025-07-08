@@ -1,5 +1,5 @@
-﻿using Itera.Suite.Domain.Enums;
-using Itera.Suite.Domain.ValueObjects;
+﻿using Itera.Suite.Domain.ValueObjects;
+using Itera.Suite.Shared.Enums;
 
 namespace Itera.Suite.Domain.Entities;
 

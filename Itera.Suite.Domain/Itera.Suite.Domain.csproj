@@ -14,5 +14,9 @@
     <Folder Include="Enums\" />
     <Folder Include="Identity\Interfaces\" />
   </ItemGroup>
+	
+<ItemGroup>
+    <ProjectReference Include="..\Itera.Suite.Shared\Itera.Suite.Shared.csproj" />
+  </ItemGroup>
 
 </Project>

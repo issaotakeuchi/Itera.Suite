@@ -1,4 +1,4 @@
-﻿using Itera.Suite.Domain.Enums;
+﻿using Itera.Suite.Shared.Enums;
 using Itera.Suite.Domain.ValueObjects;
 
 namespace Itera.Suite.Domain.Entities;

@@ -3,6 +3,7 @@ using Itera.Suite.Domain.Entities;
 using Itera.Suite.Domain.Enums;
 using Itera.Suite.Domain.Interfaces;
 using Itera.Suite.Domain.ValueObjects;
+using Itera.Suite.Shared.Enums;
 
 namespace Itera.Suite.Application.Handlers.ProjetosDeViagem;
 

@@ -1,4 +1,4 @@
-﻿using Itera.Suite.Application.DTOs.Auth;
+﻿using Itera.Suite.Shared.DTOs.Auth;
 using MediatR;
 
 namespace Itera.Suite.Application.Commands.Auth;

@@ -1,6 +1,6 @@
-﻿using Itera.Suite.Application.DTOs.Auth;
-using Itera.Suite.Domain.Identity;
+﻿using Itera.Suite.Domain.Identity;
 using Itera.Suite.Infrastructure.Services;
+using Itera.Suite.Shared.DTOs.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
