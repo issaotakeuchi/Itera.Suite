@@ -1,4 +1,4 @@
-﻿namespace Itera.Suite.Domain.ValueObjects;
+﻿namespace Itera.Suite.Shared.ValueObjects;
 
 public abstract class ObservacaoBase
 {

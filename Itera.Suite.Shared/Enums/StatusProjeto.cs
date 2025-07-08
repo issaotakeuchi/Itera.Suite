@@ -1,4 +1,4 @@
-﻿namespace Itera.Suite.Domain.Enums;
+﻿namespace Itera.Suite.Shared.Enums;
 
 public enum StatusProjeto
 {

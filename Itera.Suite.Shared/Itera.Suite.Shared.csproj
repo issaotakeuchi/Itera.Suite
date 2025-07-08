@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Itera.Suite.Domain\Itera.Suite.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

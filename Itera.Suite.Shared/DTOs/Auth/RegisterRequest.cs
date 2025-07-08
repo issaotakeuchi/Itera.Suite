@@ -1,4 +1,4 @@
-﻿namespace Itera.Suite.Application.DTOs.Auth;
+﻿namespace Itera.Suite.Shared.DTOs.Auth;
 
 public class RegisterRequest
 {
