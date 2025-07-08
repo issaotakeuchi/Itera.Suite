@@ -8,7 +8,7 @@ public class ItemDeCusto
 {
     public Guid Id { get; set; }
     public Guid ProjetoDeViagemId { get; set; }
-    public string Categoria { get; set; }         // Ex: "Transporte", "Hospedagem", "Guia"
+    public CategoriaItemDeCusto Categoria { get; set; }         // Ex: "Transporte", "Hospedagem", "Guia"
     public string Descricao { get; set; }         // Ex: "Ônibus Transcomin", "Pousada Cavernas"
     public Guid? FornecedorId { get; set; }
     public Fornecedor? Fornecedor { get; set; }        // Nome da empresa ou pessoa prestadora
