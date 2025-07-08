@@ -1,5 +1,4 @@
 ﻿using Itera.Suite.Domain.Entities;
-using Itera.Suite.Domain.ValueObjects;
 using Itera.Suite.Domain.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;

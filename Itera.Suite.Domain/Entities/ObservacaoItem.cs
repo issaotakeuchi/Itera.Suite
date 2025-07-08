@@ -1,6 +1,6 @@
-﻿using Itera.Suite.Domain.Entities;
+﻿using Itera.Suite.Domain.ValueObjects;
 
-namespace Itera.Suite.Domain.ValueObjects;
+namespace Itera.Suite.Domain.Entities;
 
 public class ObservacaoItem : ObservacaoBase
 {

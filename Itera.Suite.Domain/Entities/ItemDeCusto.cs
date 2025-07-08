@@ -1,5 +1,4 @@
 ﻿using Itera.Suite.Shared.Enums;
-using Itera.Suite.Domain.ValueObjects;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Itera.Suite.Domain.Entities;
