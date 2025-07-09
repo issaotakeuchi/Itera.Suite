@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Itera.Suite.Infrastructure.Services;
+using Itera.Suite.Application.Interfaces;
+using Itera.Suite.Domain.Interfaces;
+using Itera.Suite.Infrastructure.Repositories;
+using System.Reflection.Metadata;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,8 +61,14 @@ builder.Services.AddCors(options =>
 // REGISTRE SEU TOKEN SERVICE AQUI ⬇️
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddScoped<IArquivoStorageService, CloudflareR2ArquivoStorageService>();
+builder.Services.AddScoped<IPagamentoProgramadoRepository, PagamentoProgramadoRepository>();
+
+// PARA USO DO STORAGE NO CLOUDFLARE
+builder.Services.AddScoped<IArquivoStorageService, CloudflareR2ArquivoStorageService>();
+
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+    cfg.RegisterServicesFromAssembly(typeof(AssemblyReference).Assembly));
 
 
 // CONTROLLERS

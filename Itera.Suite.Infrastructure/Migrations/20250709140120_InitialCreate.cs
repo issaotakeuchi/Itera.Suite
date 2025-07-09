@@ -79,7 +79,11 @@ namespace Itera.Suite.Infrastructure.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     Telefone = table.Column<string>(type: "text", nullable: false),
                     TipoDeServico = table.Column<string>(type: "text", nullable: false),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false)
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    CriadoPor = table.Column<string>(type: "text", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AtualizadoPor = table.Column<string>(type: "text", nullable: false),
+                    DataAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -223,15 +227,14 @@ namespace Itera.Suite.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    GrupoDeEstudoId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Categoria = table.Column<string>(type: "text", nullable: false),
+                    ProjetoDeViagemId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Categoria = table.Column<int>(type: "integer", nullable: false),
                     Descricao = table.Column<string>(type: "text", nullable: false),
                     FornecedorId = table.Column<Guid>(type: "uuid", nullable: true),
                     Diarias = table.Column<int>(type: "integer", nullable: false),
                     Quantidade = table.Column<int>(type: "integer", nullable: false),
                     ValorUnitario = table.Column<decimal>(type: "numeric", nullable: false),
-                    StatusAtual = table.Column<string>(type: "text", nullable: false),
-                    ProjetoDeViagemId = table.Column<Guid>(type: "uuid", nullable: true)
+                    StatusAtual = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -245,7 +248,8 @@ namespace Itera.Suite.Infrastructure.Migrations
                         name: "FK_ItensDeCusto_Projetos_ProjetoDeViagemId",
                         column: x => x.ProjetoDeViagemId,
                         principalTable: "Projetos",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -318,11 +322,12 @@ namespace Itera.Suite.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ItemDeCustoId = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     DataHora = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UsuarioResponsavel = table.Column<string>(type: "text", nullable: false),
                     Justificativa = table.Column<string>(type: "text", nullable: true),
-                    ItemDeCustoId = table.Column<Guid>(type: "uuid", nullable: true)
+                    ArquivoUrl = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -331,7 +336,8 @@ namespace Itera.Suite.Infrastructure.Migrations
                         name: "FK_RegistrosStatusItemDeCusto_ItensDeCusto_ItemDeCustoId",
                         column: x => x.ItemDeCustoId,
                         principalTable: "ItensDeCusto",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
