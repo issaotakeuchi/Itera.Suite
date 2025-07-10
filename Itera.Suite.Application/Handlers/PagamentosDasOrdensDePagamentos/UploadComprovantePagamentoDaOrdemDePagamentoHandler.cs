@@ -6,23 +6,23 @@ using MediatR;
 
 namespace Itera.Suite.Application.Handlers.PagamentosProgramados;
 
-public class UploadComprovantePagamentoProgramadoHandler : IRequestHandler<UploadComprovantePagamentoProgramadoCommand, string>
+public class UploadComprovantePagamentoDaOrdemDePagamentoHandler : IRequestHandler<UploadComprovantePagamentoDaOrdemDePagamentoCommand, string>
 {
     private readonly IArquivoStorageService _arquivoStorageService;
-    private readonly IOrdemDePagamentoRepository _pagamentoRepo;
+    private readonly IPagamentoDaOrdemDePagamentoRepository _pagamentoDaOrdemDePagamentoRepo;
 
-    public UploadComprovantePagamentoProgramadoHandler(
+    public UploadComprovantePagamentoDaOrdemDePagamentoHandler(
         IArquivoStorageService arquivoStorageService,
-        IOrdemDePagamentoRepository pagamentoRepo)
+        IPagamentoDaOrdemDePagamentoRepository pagamentoDaOrdemDePagamentoRepo)
     {
         _arquivoStorageService = arquivoStorageService;
-        _pagamentoRepo = pagamentoRepo;
+        _pagamentoDaOrdemDePagamentoRepo = pagamentoDaOrdemDePagamentoRepo;
     }
 
-    public async Task<string> Handle(UploadComprovantePagamentoProgramadoCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(UploadComprovantePagamentoDaOrdemDePagamentoCommand request, CancellationToken cancellationToken)
     {
-        var pagamento = await _pagamentoRepo.GetByIdAsync(request.PagamentoProgramadoId)
-            ?? throw new NotFoundException("Pagamento Programado não encontrado.");
+        var pagamentoDaOrdemDePagamento = await _pagamentoDaOrdemDePagamentoRepo.GetByIdAsync(request.PagamentoDaOrdemDePagamentoId)
+            ?? throw new NotFoundException("Pagamento da Ordem de Pagamento não encontrado.");
 
         var fileName = $"{Guid.NewGuid()}_{request.Arquivo.FileName}";
         var contentType = request.Arquivo.ContentType;
@@ -43,8 +43,8 @@ public class UploadComprovantePagamentoProgramadoHandler : IRequestHandler<Uploa
 
         var url = await _arquivoStorageService.UploadAsync(fileName, memory, contentType);
 
-        pagamento.ComprovanteUrl = url;
-        await _pagamentoRepo.UpdateAsync(pagamento);
+        pagamentoDaOrdemDePagamento.ComprovanteDaOrdemDePagamento.Url = url;
+        await _pagamentoDaOrdemDePagamentoRepo.UpdateAsync(pagamentoDaOrdemDePagamento);
 
         Console.WriteLine($"[DEBUG] Upload finalizado: {url}");
 

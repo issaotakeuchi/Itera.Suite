@@ -1,4 +1,5 @@
 ﻿using Itera.Suite.Application.Commands.PagamentosProgramados;
+using Itera.Suite.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,15 +16,15 @@ public class PagamentosProgramadosController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost("{pagamentoProgramadoId}/comprovante")]
-    public async Task<IActionResult> UploadComprovante(Guid pagamentoProgramadoId, IFormFile arquivo)
+    [HttpPost("{pagamentoDaOrdemDePagamentoId}/comprovante")]
+    public async Task<IActionResult> UploadComprovante(Guid pagamentoDaOrdemDePagamentoId, IFormFile arquivo)
     {
         if (arquivo == null || arquivo.Length == 0)
             return BadRequest("Arquivo inválido.");
 
-        var command = new UploadComprovantePagamentoProgramadoCommand
+        var command = new UploadComprovantePagamentoDaOrdemDePagamentoCommand
         {
-            PagamentoProgramadoId = pagamentoProgramadoId,
+            PagamentoDaOrdemDePagamentoId = pagamentoDaOrdemDePagamentoId,
             Arquivo = arquivo
         };
 
