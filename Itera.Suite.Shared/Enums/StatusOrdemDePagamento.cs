@@ -1,6 +1,6 @@
 ﻿namespace Itera.Suite.Domain.Enums;
 
-public enum StatusPagamentoProgramado
+public enum StatusOrdemDePagamento
 {
     Previsto = 0,
     Efetuado = 1,

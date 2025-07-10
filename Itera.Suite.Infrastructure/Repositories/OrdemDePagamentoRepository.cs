@@ -5,22 +5,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Itera.Suite.Infrastructure.Repositories;
 
-public class PagamentoProgramadoRepository : IPagamentoProgramadoRepository
+public class OrdemDePagamentoRepository : IOrdemDePagamentoRepository
 {
     private readonly AppDbContext _context;
 
-    public PagamentoProgramadoRepository(AppDbContext context)
+    public OrdemDePagamentoRepository(AppDbContext context)
     {
         _context = context;
     }
 
-    public Task<PagamentoProgramado?> GetByIdAsync(Guid id)
+    public Task<OrdemDePagamento?> GetByIdAsync(Guid id)
     {
         return _context.PagamentosProgramados
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task UpdateAsync(PagamentoProgramado pagamento)
+    public async Task UpdateAsync(OrdemDePagamento pagamento)
     {
         _context.PagamentosProgramados.Update(pagamento);
         await _context.SaveChangesAsync();

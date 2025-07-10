@@ -20,7 +20,7 @@ public class AppDbContext : IdentityDbContext<UsuarioIdentity, IdentityRole<Guid
     // Observações (ValueObjects persistidos)
     public DbSet<ObservacaoProjeto> ObservacoesProjeto { get; set; }
     public DbSet<ObservacaoItem> ObservacoesItem { get; set; }
-    public DbSet<ObservacaoPagamentoProgramado> ObservacoesPagamento { get; set; }
+    public DbSet<ObservacaoDaOrdemDePagamento> ObservacoesPagamento { get; set; }
 
     // Histórico de status
     public DbSet<RegistroStatusItemDeCusto> RegistrosStatusItemDeCusto { get; set; }

@@ -62,7 +62,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddScoped<IArquivoStorageService, CloudflareR2ArquivoStorageService>();
-builder.Services.AddScoped<IPagamentoProgramadoRepository, PagamentoProgramadoRepository>();
+builder.Services.AddScoped<IOrdemDePagamentoRepository, OrdemDePagamentoRepository>();
 
 // PARA USO DO STORAGE NO CLOUDFLARE
 builder.Services.AddScoped<IArquivoStorageService, CloudflareR2ArquivoStorageService>();

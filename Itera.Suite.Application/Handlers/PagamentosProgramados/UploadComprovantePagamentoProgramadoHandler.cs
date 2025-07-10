@@ -9,11 +9,11 @@ namespace Itera.Suite.Application.Handlers.PagamentosProgramados;
 public class UploadComprovantePagamentoProgramadoHandler : IRequestHandler<UploadComprovantePagamentoProgramadoCommand, string>
 {
     private readonly IArquivoStorageService _arquivoStorageService;
-    private readonly IPagamentoProgramadoRepository _pagamentoRepo;
+    private readonly IOrdemDePagamentoRepository _pagamentoRepo;
 
     public UploadComprovantePagamentoProgramadoHandler(
         IArquivoStorageService arquivoStorageService,
-        IPagamentoProgramadoRepository pagamentoRepo)
+        IOrdemDePagamentoRepository pagamentoRepo)
     {
         _arquivoStorageService = arquivoStorageService;
         _pagamentoRepo = pagamentoRepo;

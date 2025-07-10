@@ -17,7 +17,7 @@ public class ItemDeCusto
     [NotMapped]
     public decimal Total => Diarias * Quantidade * ValorUnitario;
     public ICollection<ObservacaoItem> Observacoes { get; set; } = new List<ObservacaoItem>();
-    public ICollection<PagamentoProgramado> Pagamentos { get; set; } = new List<PagamentoProgramado>();
+    public ICollection<OrdemDePagamento> Pagamentos { get; set; } = new List<OrdemDePagamento>();
     public StatusItemDeCusto StatusAtual { get; private set; } = StatusItemDeCusto.Rascunho;
     public List<RegistroStatusItemDeCusto> HistoricoStatus { get; private set; } = new();
     public void AlterarStatus(StatusItemDeCusto novoStatus, string usuario, string? justificativa = null)

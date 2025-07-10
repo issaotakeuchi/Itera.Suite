@@ -2,10 +2,10 @@
 
 namespace Itera.Suite.Domain.Interfaces;
 
-public interface IPagamentoProgramadoRepository
+public interface IOrdemDePagamentoRepository
 {
-    Task<PagamentoProgramado?> GetByIdAsync(Guid id);
-    Task UpdateAsync(PagamentoProgramado pagamento);
+    Task<OrdemDePagamento?> GetByIdAsync(Guid id);
+    Task UpdateAsync(OrdemDePagamento pagamento);
     // Exemplos futuros:
     // Task<IEnumerable<PagamentoProgramado>> GetAtrasadosPorProjeto(Guid projetoId);
     // Task AddAsync(PagamentoProgramado pagamento);
