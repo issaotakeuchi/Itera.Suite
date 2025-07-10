@@ -24,15 +24,29 @@ public class UploadComprovantePagamentoProgramadoHandler : IRequestHandler<Uploa
         var pagamento = await _pagamentoRepo.GetByIdAsync(request.PagamentoProgramadoId)
             ?? throw new NotFoundException("Pagamento Programado não encontrado.");
 
-        using var stream = request.Arquivo.OpenReadStream();
         var fileName = $"{Guid.NewGuid()}_{request.Arquivo.FileName}";
         var contentType = request.Arquivo.ContentType;
 
-        var url = await _arquivoStorageService.UploadAsync(fileName, stream, contentType);
+        // ⚡ Blindagem: bufferiza no MemoryStream
+        await using var input = request.Arquivo.OpenReadStream();
+        await using var memory = new MemoryStream();
+        await input.CopyToAsync(memory);
+
+        // ⚡ IMPORTANTE! Volta pro início antes de ToArray()
+        memory.Position = 0;
+
+        var bytes = memory.ToArray();
+
+        // ✅ LOG: veja tamanho real e posição
+        Console.WriteLine($"[DEBUG] MemoryStream Length: {memory.Length}");
+        Console.WriteLine($"[DEBUG] MemoryStream Position: {memory.Position}");
+
+        var url = await _arquivoStorageService.UploadAsync(fileName, memory, contentType);
 
         pagamento.ComprovanteUrl = url;
+        await _pagamentoRepo.UpdateAsync(pagamento);
 
-        await _pagamentoRepo.UpdateAsync(pagamento); // Ou UnitOfWork se usar.
+        Console.WriteLine($"[DEBUG] Upload finalizado: {url}");
 
         return url;
     }

@@ -1,4 +1,5 @@
-﻿using Itera.Suite.Infrastructure.Data;
+﻿using Itera.Suite.Application;
+using Itera.Suite.Infrastructure.Data;
 using Itera.Suite.Domain.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +10,6 @@ using Itera.Suite.Infrastructure.Services;
 using Itera.Suite.Application.Interfaces;
 using Itera.Suite.Domain.Interfaces;
 using Itera.Suite.Infrastructure.Repositories;
-using System.Reflection.Metadata;
 
 var builder = WebApplication.CreateBuilder(args);
 

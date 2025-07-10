@@ -15,7 +15,7 @@ public class AppDbContext : IdentityDbContext<UsuarioIdentity, IdentityRole<Guid
     public DbSet<ItemDeCusto> ItensDeCusto { get; set; }
     public DbSet<Cliente> Clientes { get; set; }
     public DbSet<Fornecedor> Fornecedores { get; set; }
-    public DbSet<PagamentoProgramado> PagamentosProgramados { get; set; }
+    public DbSet<OrdemDePagamento> PagamentosProgramados { get; set; }
 
     // Observações (ValueObjects persistidos)
     public DbSet<ObservacaoProjeto> ObservacoesProjeto { get; set; }
@@ -44,11 +44,11 @@ public class AppDbContext : IdentityDbContext<UsuarioIdentity, IdentityRole<Guid
             .Property(f => f.TipoDeServico)
             .HasConversion<string>();
 
-        modelBuilder.Entity<PagamentoProgramado>()
+        modelBuilder.Entity<OrdemDePagamento>()
             .Property(p => p.Forma)
             .HasConversion<string>();
 
-        modelBuilder.Entity<PagamentoProgramado>()
+        modelBuilder.Entity<OrdemDePagamento>()
             .Property(p => p.Status)
             .HasConversion<string>();
 
@@ -73,7 +73,7 @@ public class AppDbContext : IdentityDbContext<UsuarioIdentity, IdentityRole<Guid
             .WithOne()
             .HasForeignKey("ItemDeCustoId");
 
-        modelBuilder.Entity<PagamentoProgramado>()
+        modelBuilder.Entity<OrdemDePagamento>()
             .HasMany(p => p.Observacoes)
             .WithOne(o => o.PagamentoProgramado)
             .HasForeignKey(o => o.PagamentoProgramadoId);
