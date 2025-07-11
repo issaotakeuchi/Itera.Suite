@@ -8,6 +8,6 @@ public class PagamentoDaOrdemDePagamento
     public decimal ValorTotal { get; set; }
     public DateTime DataPagamento { get; set; }
     public FormaPagamento FormaPagamento { get; set; }
-    public ComprovanteDaOrdemDePagamento ComprovanteDaOrdemDePagamento { get; set; }
+    public ComprovanteDaOrdemDePagamento? ComprovanteDaOrdemDePagamento { get; set; }
     public List<QuitacaoDaOrdemDePagamento> Quitacoes { get; set; } = new();
 }

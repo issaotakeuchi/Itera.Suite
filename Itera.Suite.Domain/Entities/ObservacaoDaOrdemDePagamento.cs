@@ -1,10 +1,10 @@
-﻿using Itera.Suite.Domain.ValueObjects;
+﻿using Itera.Suite.Domain.Common;
 
 namespace Itera.Suite.Domain.Entities;
 
 public class ObservacaoDaOrdemDePagamento : ObservacaoBase
 {
     public Guid OrdemDeProgramadoId { get; set; }
-    public OrdemDePagamento PagamentoProgramado { get; set; }
+    public OrdemDePagamento OrdemDePagamento { get; set; }
 }
 

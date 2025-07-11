@@ -13,6 +13,7 @@
   <ItemGroup>
     <Folder Include="Enums\" />
     <Folder Include="Identity\Interfaces\" />
+    <Folder Include="ValueObjects\" />
   </ItemGroup>
 	
 <ItemGroup>

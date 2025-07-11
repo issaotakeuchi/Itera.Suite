@@ -7,11 +7,11 @@ namespace Itera.Suite.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PagamentosProgramadosController : ControllerBase
+public class PagamentosDasOrdensDePagamentosController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public PagamentosProgramadosController(IMediator mediator)
+    public PagamentosDasOrdensDePagamentosController(IMediator mediator)
     {
         _mediator = mediator;
     }

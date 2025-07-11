@@ -38,10 +38,6 @@ namespace Itera.Suite.Infrastructure.Data
                 .Property(p => p.Status)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<ProjetoDeViagem>()
-                .Property(p => p.Tipo)
-                .HasConversion<string>();
-
             modelBuilder.Entity<ItemDeCusto>()
                 .Property(i => i.StatusAtual)
                 .HasConversion<string>();
@@ -85,7 +81,7 @@ namespace Itera.Suite.Infrastructure.Data
 
             modelBuilder.Entity<OrdemDePagamento>()
                 .HasMany(o => o.Observacoes)
-                .WithOne(o => o.PagamentoProgramado)
+                .WithOne(o => o.OrdemDePagamento)
                 .HasForeignKey(o => o.OrdemDeProgramadoId);
 
             modelBuilder.Entity<OrdemDePagamento>()
