@@ -1,12 +1,9 @@
 ﻿using Itera.Suite.Domain.Common;
 using Itera.Suite.Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Itera.Suite.Domain.Entities
 {
-    public class ProjetoDeViagem : Entity, IAggregateRoot
+    public class ProjetoDeViagem : AuditableEntity, IAggregateRoot
     {
         // 📌 Identidade e núcleo
         public string NomeInterno { get; private set; }
@@ -17,12 +14,8 @@ namespace Itera.Suite.Domain.Entities
         public DateOnly DataSaida { get; private set; }
         public DateOnly DataRetorno { get; private set; }
         public StatusProjeto Status { get; private set; }
-
         public Guid ClienteId { get; private set; }
         public Cliente Cliente { get; private set; }
-
-        public string CriadoPor { get; private set; }
-        public DateTime DataCriacao { get; private set; }
 
         // 📌 Itens de Custo
         private readonly List<ItemDeCusto> _itensDeCusto = new();
@@ -37,29 +30,31 @@ namespace Itera.Suite.Domain.Entities
 
         // ⚙️ Construtor rico
         public ProjetoDeViagem(
-            Guid clienteId,
-            string nomeInterno,
-            string origem,
-            string destino,
-            string objetivo,
-            DateOnly dataSaida,
-            DateOnly dataRetorno,
-            TipoProjeto tipo,
-            string criadoPor)
+        Guid clienteId,
+        string nomeInterno,
+        string origem,
+        string destino,
+        string objetivo,
+        DateOnly dataSaida,
+        DateOnly dataRetorno,
+        TipoProjeto tipo,
+        string criadoPor)
         {
+            // validações
             ClienteId = clienteId;
-            NomeInterno = !string.IsNullOrWhiteSpace(nomeInterno) ? nomeInterno : throw new ArgumentNullException(nameof(nomeInterno));
-            Origem = !string.IsNullOrWhiteSpace(origem) ? origem : throw new ArgumentNullException(nameof(origem));
-            Destino = !string.IsNullOrWhiteSpace(destino) ? destino : throw new ArgumentNullException(nameof(destino));
-            Objetivo = !string.IsNullOrWhiteSpace(objetivo) ? objetivo : throw new ArgumentNullException(nameof(objetivo));
+            NomeInterno = nomeInterno ?? throw new ArgumentNullException(nameof(nomeInterno));
+            Origem = origem ?? throw new ArgumentNullException(nameof(origem));
+            Destino = destino ?? throw new ArgumentNullException(nameof(destino));
+            Objetivo = objetivo ?? throw new ArgumentNullException(nameof(objetivo));
             DataSaida = dataSaida;
             DataRetorno = dataRetorno;
             Tipo = tipo;
 
             if (dataRetorno < dataSaida)
-                throw new ArgumentException("Data de retorno não pode ser anterior à data de saída.");
+                throw new ArgumentException("Data de retorno não pode ser anterior à saída.");
 
             Status = StatusProjeto.Estimado;
+
             CriadoPor = criadoPor ?? "Sistema";
             DataCriacao = DateTime.UtcNow;
         }
@@ -76,9 +71,8 @@ namespace Itera.Suite.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(texto))
                 throw new ArgumentException("Texto da observação não pode ser vazio.");
-
             if (autorId == Guid.Empty)
-                throw new ArgumentException("Autor da observação não pode ser vazio.");
+                throw new ArgumentException("AutorId não pode ser Guid.Empty.");
 
             _observacoes.Add(new ObservacaoProjeto(texto, autorId));
         }

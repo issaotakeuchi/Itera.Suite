@@ -59,7 +59,7 @@ namespace Itera.Suite.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nome = table.Column<string>(type: "text", nullable: false),
                     Documento = table.Column<string>(type: "text", nullable: false),
-                    Tipo = table.Column<string>(type: "text", nullable: false),
+                    Tipo = table.Column<int>(type: "integer", nullable: false),
                     ContatoPrincipal = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Telefone = table.Column<string>(type: "text", nullable: false)
@@ -75,19 +75,33 @@ namespace Itera.Suite.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nome = table.Column<string>(type: "text", nullable: false),
-                    Contato = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Telefone = table.Column<string>(type: "text", nullable: false),
-                    TipoDeServico = table.Column<string>(type: "text", nullable: false),
+                    Contato = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    Telefone = table.Column<string>(type: "text", nullable: true),
+                    TipoDeServico = table.Column<string>(type: "text", nullable: true),
                     Ativo = table.Column<bool>(type: "boolean", nullable: false),
                     CriadoPor = table.Column<string>(type: "text", nullable: false),
                     DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    AtualizadoPor = table.Column<string>(type: "text", nullable: false),
+                    AtualizadoPor = table.Column<string>(type: "text", nullable: true),
                     DataAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Fornecedores", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PagamentosDaOrdemDePagamento",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ValorTotal = table.Column<decimal>(type: "numeric", nullable: false),
+                    DataPagamento = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    FormaPagamento = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PagamentosDaOrdemDePagamento", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,15 +215,17 @@ namespace Itera.Suite.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClienteId = table.Column<Guid>(type: "uuid", nullable: false),
                     NomeInterno = table.Column<string>(type: "text", nullable: false),
-                    Tipo = table.Column<string>(type: "text", nullable: false),
                     Origem = table.Column<string>(type: "text", nullable: false),
                     Destino = table.Column<string>(type: "text", nullable: false),
-                    DataSaida = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DataRetorno = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Objetivo = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false)
+                    Tipo = table.Column<string>(type: "text", nullable: false),
+                    DataSaida = table.Column<DateOnly>(type: "date", nullable: false),
+                    DataRetorno = table.Column<DateOnly>(type: "date", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    ClienteId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CriadoPor = table.Column<string>(type: "text", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -218,6 +234,28 @@ namespace Itera.Suite.Infrastructure.Migrations
                         name: "FK_Projetos_Clientes_ClienteId",
                         column: x => x.ClienteId,
                         principalTable: "Clientes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComprovantesDaOrdemDePagamento",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PagamentoDaOrdemDePagamentoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: false),
+                    NomeArquivoOriginal = table.Column<string>(type: "text", nullable: false),
+                    DataUpload = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AnexadoPor = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComprovantesDaOrdemDePagamento", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComprovantesDaOrdemDePagamento_PagamentosDaOrdemDePagamento~",
+                        column: x => x.PagamentoDaOrdemDePagamentoId,
+                        principalTable: "PagamentosDaOrdemDePagamento",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -259,8 +297,9 @@ namespace Itera.Suite.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ProjetoDeViagemId = table.Column<Guid>(type: "uuid", nullable: false),
                     Texto = table.Column<string>(type: "text", nullable: false),
-                    DataHora = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Autor = table.Column<string>(type: "text", nullable: false)
+                    AutorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataUltimaAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -280,8 +319,9 @@ namespace Itera.Suite.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ItemDeCustoId = table.Column<Guid>(type: "uuid", nullable: false),
                     Texto = table.Column<string>(type: "text", nullable: false),
-                    DataHora = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Autor = table.Column<string>(type: "text", nullable: false)
+                    AutorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataUltimaAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -295,22 +335,21 @@ namespace Itera.Suite.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PagamentosProgramados",
+                name: "OrdensDePagamento",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ItemDeCustoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ValorAutorizado = table.Column<decimal>(type: "numeric", nullable: false),
                     DataPrevista = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Valor = table.Column<decimal>(type: "numeric", nullable: false),
                     Forma = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false),
-                    ComprovanteUrl = table.Column<string>(type: "text", nullable: true)
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PagamentosProgramados", x => x.Id);
+                    table.PrimaryKey("PK_OrdensDePagamento", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PagamentosProgramados_ItensDeCusto_ItemDeCustoId",
+                        name: "FK_OrdensDePagamento_ItensDeCusto_ItemDeCustoId",
                         column: x => x.ItemDeCustoId,
                         principalTable: "ItensDeCusto",
                         principalColumn: "Id",
@@ -341,22 +380,72 @@ namespace Itera.Suite.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ObservacoesPagamento",
+                name: "ObservacoesOrdemDePagamento",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    PagamentoProgramadoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrdemDePagamentoId = table.Column<Guid>(type: "uuid", nullable: false),
                     Texto = table.Column<string>(type: "text", nullable: false),
-                    DataHora = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Autor = table.Column<string>(type: "text", nullable: false)
+                    AutorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataUltimaAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ObservacoesPagamento", x => x.Id);
+                    table.PrimaryKey("PK_ObservacoesOrdemDePagamento", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ObservacoesPagamento_PagamentosProgramados_PagamentoProgram~",
-                        column: x => x.PagamentoProgramadoId,
-                        principalTable: "PagamentosProgramados",
+                        name: "FK_ObservacoesOrdemDePagamento_OrdensDePagamento_OrdemDePagame~",
+                        column: x => x.OrdemDePagamentoId,
+                        principalTable: "OrdensDePagamento",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuitacoesDaOrdemDePagamento",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrdemDePagamentoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PagamentoDaOrdemDePagamentoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ValorQuitado = table.Column<decimal>(type: "numeric", nullable: false),
+                    DataQuitacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuitacoesDaOrdemDePagamento", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_QuitacoesDaOrdemDePagamento_OrdensDePagamento_OrdemDePagame~",
+                        column: x => x.OrdemDePagamentoId,
+                        principalTable: "OrdensDePagamento",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_QuitacoesDaOrdemDePagamento_PagamentosDaOrdemDePagamento_Pa~",
+                        column: x => x.PagamentoDaOrdemDePagamentoId,
+                        principalTable: "PagamentosDaOrdemDePagamento",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ObservacoesQuitacaoDaOrdemDePagamento",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    QuitacaoDaOrdemDePagamentoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Texto = table.Column<string>(type: "text", nullable: false),
+                    AutorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataUltimaAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ObservacoesQuitacaoDaOrdemDePagamento", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ObservacoesQuitacaoDaOrdemDePagamento_QuitacoesDaOrdemDePag~",
+                        column: x => x.QuitacaoDaOrdemDePagamentoId,
+                        principalTable: "QuitacoesDaOrdemDePagamento",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -399,6 +488,12 @@ namespace Itera.Suite.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ComprovantesDaOrdemDePagamento_PagamentoDaOrdemDePagamentoId",
+                table: "ComprovantesDaOrdemDePagamento",
+                column: "PagamentoDaOrdemDePagamentoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ItensDeCusto_FornecedorId",
                 table: "ItensDeCusto",
                 column: "FornecedorId");
@@ -414,9 +509,9 @@ namespace Itera.Suite.Infrastructure.Migrations
                 column: "ItemDeCustoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ObservacoesPagamento_PagamentoProgramadoId",
-                table: "ObservacoesPagamento",
-                column: "PagamentoProgramadoId");
+                name: "IX_ObservacoesOrdemDePagamento_OrdemDePagamentoId",
+                table: "ObservacoesOrdemDePagamento",
+                column: "OrdemDePagamentoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ObservacoesProjeto_ProjetoDeViagemId",
@@ -424,14 +519,29 @@ namespace Itera.Suite.Infrastructure.Migrations
                 column: "ProjetoDeViagemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PagamentosProgramados_ItemDeCustoId",
-                table: "PagamentosProgramados",
+                name: "IX_ObservacoesQuitacaoDaOrdemDePagamento_QuitacaoDaOrdemDePaga~",
+                table: "ObservacoesQuitacaoDaOrdemDePagamento",
+                column: "QuitacaoDaOrdemDePagamentoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrdensDePagamento_ItemDeCustoId",
+                table: "OrdensDePagamento",
                 column: "ItemDeCustoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projetos_ClienteId",
                 table: "Projetos",
                 column: "ClienteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuitacoesDaOrdemDePagamento_OrdemDePagamentoId",
+                table: "QuitacoesDaOrdemDePagamento",
+                column: "OrdemDePagamentoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuitacoesDaOrdemDePagamento_PagamentoDaOrdemDePagamentoId",
+                table: "QuitacoesDaOrdemDePagamento",
+                column: "PagamentoDaOrdemDePagamentoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegistrosStatusItemDeCusto_ItemDeCustoId",
@@ -458,13 +568,19 @@ namespace Itera.Suite.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ComprovantesDaOrdemDePagamento");
+
+            migrationBuilder.DropTable(
                 name: "ObservacoesItem");
 
             migrationBuilder.DropTable(
-                name: "ObservacoesPagamento");
+                name: "ObservacoesOrdemDePagamento");
 
             migrationBuilder.DropTable(
                 name: "ObservacoesProjeto");
+
+            migrationBuilder.DropTable(
+                name: "ObservacoesQuitacaoDaOrdemDePagamento");
 
             migrationBuilder.DropTable(
                 name: "RegistrosStatusItemDeCusto");
@@ -476,7 +592,13 @@ namespace Itera.Suite.Infrastructure.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "PagamentosProgramados");
+                name: "QuitacoesDaOrdemDePagamento");
+
+            migrationBuilder.DropTable(
+                name: "OrdensDePagamento");
+
+            migrationBuilder.DropTable(
+                name: "PagamentosDaOrdemDePagamento");
 
             migrationBuilder.DropTable(
                 name: "ItensDeCusto");

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Itera.Suite.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250710180730_AddOrdemDePagamentoModulo")]
-    partial class AddOrdemDePagamentoModulo
+    [Migration("20250711131504_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Itera.Suite.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Itera.Suite.Domain.Entities.Cliente", b =>
+            modelBuilder.Entity("Cliente", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,13 +51,55 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("Fornecedor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("AtualizadoPor")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Contato")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CriadoPor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telefone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TipoDeServico")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Fornecedores");
                 });
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.ComprovanteDaOrdemDePagamento", b =>
@@ -90,54 +132,6 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ComprovantesDaOrdemDePagamento");
-                });
-
-            modelBuilder.Entity("Itera.Suite.Domain.Entities.Fornecedor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("AtualizadoPor")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Contato")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CriadoPor")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("DataAtualizacao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Telefone")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TipoDeServico")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Fornecedores");
                 });
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.ItemDeCusto", b =>
@@ -187,14 +181,16 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Autor")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("AutorId")
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DataHora")
+                    b.Property<DateTime>("DataCriacao")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("OrdemDeProgramadoId")
+                    b.Property<DateTime?>("DataUltimaAtualizacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OrdemDePagamentoId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Texto")
@@ -203,7 +199,7 @@ namespace Itera.Suite.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrdemDeProgramadoId");
+                    b.HasIndex("OrdemDePagamentoId");
 
                     b.ToTable("ObservacoesOrdemDePagamento");
                 });
@@ -214,11 +210,13 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Autor")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("AutorId")
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DataHora")
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DataUltimaAtualizacao")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("QuitacaoDaOrdemDePagamentoId")
@@ -241,11 +239,13 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Autor")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("AutorId")
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DataHora")
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DataUltimaAtualizacao")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("ItemDeCustoId")
@@ -268,11 +268,13 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Autor")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("AutorId")
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DataHora")
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DataUltimaAtualizacao")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("ProjetoDeViagemId")
@@ -349,11 +351,18 @@ namespace Itera.Suite.Infrastructure.Migrations
                     b.Property<Guid>("ClienteId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DataRetorno")
+                    b.Property<string>("CriadoPor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DataCriacao")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DataSaida")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("DataRetorno")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("DataSaida")
+                        .HasColumnType("date");
 
                     b.Property<string>("Destino")
                         .IsRequired()
@@ -657,28 +666,30 @@ namespace Itera.Suite.Infrastructure.Migrations
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.ItemDeCusto", b =>
                 {
-                    b.HasOne("Itera.Suite.Domain.Entities.Fornecedor", "Fornecedor")
+                    b.HasOne("Fornecedor", "Fornecedor")
                         .WithMany("ItensDeCusto")
                         .HasForeignKey("FornecedorId");
 
-                    b.HasOne("Itera.Suite.Domain.Entities.ProjetoDeViagem", null)
+                    b.HasOne("Itera.Suite.Domain.Entities.ProjetoDeViagem", "ProjetoDeViagem")
                         .WithMany("ItensDeCusto")
                         .HasForeignKey("ProjetoDeViagemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Fornecedor");
+
+                    b.Navigation("ProjetoDeViagem");
                 });
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.ObservacaoDaOrdemDePagamento", b =>
                 {
-                    b.HasOne("Itera.Suite.Domain.Entities.OrdemDePagamento", "PagamentoProgramado")
+                    b.HasOne("Itera.Suite.Domain.Entities.OrdemDePagamento", "OrdemDePagamento")
                         .WithMany("Observacoes")
-                        .HasForeignKey("OrdemDeProgramadoId")
+                        .HasForeignKey("OrdemDePagamentoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PagamentoProgramado");
+                    b.Navigation("OrdemDePagamento");
                 });
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.ObservacaoDaQuitacaoDaOrdemDePagamento", b =>
@@ -727,7 +738,7 @@ namespace Itera.Suite.Infrastructure.Migrations
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.ProjetoDeViagem", b =>
                 {
-                    b.HasOne("Itera.Suite.Domain.Entities.Cliente", "Cliente")
+                    b.HasOne("Cliente", "Cliente")
                         .WithMany("Projetos")
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -815,12 +826,12 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Itera.Suite.Domain.Entities.Cliente", b =>
+            modelBuilder.Entity("Cliente", b =>
                 {
                     b.Navigation("Projetos");
                 });
 
-            modelBuilder.Entity("Itera.Suite.Domain.Entities.Fornecedor", b =>
+            modelBuilder.Entity("Fornecedor", b =>
                 {
                     b.Navigation("ItensDeCusto");
                 });
@@ -843,8 +854,7 @@ namespace Itera.Suite.Infrastructure.Migrations
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.PagamentoDaOrdemDePagamento", b =>
                 {
-                    b.Navigation("ComprovanteDaOrdemDePagamento")
-                        .IsRequired();
+                    b.Navigation("ComprovanteDaOrdemDePagamento");
 
                     b.Navigation("Quitacoes");
                 });

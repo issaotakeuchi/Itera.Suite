@@ -16,7 +16,7 @@ public class ProjetoDeViagemRepository : IProjetoDeViagemRepository
 
     public async Task<ProjetoDeViagem?> ObterPorIdAsync(Guid id)
     {
-        return await _context.Projetos
+        return await _context.ProjetosDeViagem
             .Include(p => p.Cliente)
             .Include(p => p.ItensDeCusto)
                 .ThenInclude(i => i.Pagamentos)
@@ -25,14 +25,14 @@ public class ProjetoDeViagemRepository : IProjetoDeViagemRepository
 
     public async Task<List<ProjetoDeViagem>> ListarTodosAsync()
     {
-        return await _context.Projetos
+        return await _context.ProjetosDeViagem
             .Include(p => p.Cliente)
             .ToListAsync();
     }
 
     public async Task AdicionarAsync(ProjetoDeViagem projeto)
     {
-        await _context.Projetos.AddAsync(projeto);
+        await _context.ProjetosDeViagem.AddAsync(projeto);
     }
 
     public async Task SalvarAlteracoesAsync()

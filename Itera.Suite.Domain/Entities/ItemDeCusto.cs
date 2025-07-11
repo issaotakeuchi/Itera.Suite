@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Itera.Suite.Domain.Entities;
 
-public class ItemDeCusto : Entity
+public class ItemDeCusto : AuditableEntity
 {
     public Guid ProjetoDeViagemId { get; private set; }
     public ProjetoDeViagem ProjetoDeViagem { get; private set; }
@@ -41,7 +41,8 @@ public class ItemDeCusto : Entity
         int diarias,
         int quantidade,
         decimal valorUnitario,
-        Guid? fornecedorId = null)
+        Guid? fornecedorId,
+        string criadoPor)
     {
         if (projetoDeViagemId == Guid.Empty)
             throw new ArgumentException("ProjetoDeViagemId não pode ser vazio.");
@@ -65,7 +66,8 @@ public class ItemDeCusto : Entity
         Quantidade = quantidade;
         ValorUnitario = valorUnitario;
         FornecedorId = fornecedorId;
-
+        CriadoPor = criadoPor;
+        DataCriacao = DateTime.UtcNow;
         StatusAtual = StatusItemDeCusto.Rascunho;
 
         // Opcional: inicializa primeiro histórico

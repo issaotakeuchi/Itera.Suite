@@ -10,6 +10,10 @@ using Itera.Suite.Infrastructure.Services;
 using Itera.Suite.Application.Interfaces;
 using Itera.Suite.Domain.Interfaces;
 using Itera.Suite.Infrastructure.Repositories;
+using Itera.Suite.Application.Handlers.Clientes;
+using Itera.Suite.Application.Handlers.Fornecedores;
+using Itera.Suite.Application.Handlers.ItensDeCusto;
+using Itera.Suite.Application.Handlers.ProjetosDeViagem;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,11 +62,24 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
+builder.Services.AddHttpContextAccessor();
+
 // REGISTRE SEU TOKEN SERVICE AQUI ⬇️
 builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddScoped<IArquivoStorageService, CloudflareR2ArquivoStorageService>();
 builder.Services.AddScoped<IPagamentoDaOrdemDePagamentoRepository, PagamentoDaOrdemDePagamentoRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<CriarClienteCommandHandler>();
+builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+builder.Services.AddScoped<CriarFornecedorCommandHandler>();
+builder.Services.AddScoped<IItemDeCustoRepository, ItemDeCustoRepository>();
+builder.Services.AddScoped<CriarItemDeCustoCommandHandler>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IProjetoDeViagemRepository, ProjetoDeViagemRepository>();
+builder.Services.AddScoped<CriarProjetoDeViagemCommandHandler>();
+builder.Services.AddHttpContextAccessor();
+
 
 // PARA USO DO STORAGE NO CLOUDFLARE
 builder.Services.AddScoped<IArquivoStorageService, CloudflareR2ArquivoStorageService>();

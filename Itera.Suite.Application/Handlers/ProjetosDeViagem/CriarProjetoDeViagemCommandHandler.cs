@@ -1,50 +1,53 @@
 ﻿using Itera.Suite.Application.Commands.ProjetosDeViagem;
 using Itera.Suite.Domain.Entities;
-using Itera.Suite.Domain.Enums;
 using Itera.Suite.Domain.Interfaces;
 using Itera.Suite.Shared.Enums;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Itera.Suite.Application.Handlers.ProjetosDeViagem;
 
 public class CriarProjetoDeViagemCommandHandler
 {
     private readonly IProjetoDeViagemRepository _repository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CriarProjetoDeViagemCommandHandler(IProjetoDeViagemRepository repository)
+    public CriarProjetoDeViagemCommandHandler(
+        IProjetoDeViagemRepository repository,
+        IHttpContextAccessor httpContextAccessor)
     {
         _repository = repository;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<Guid> HandleAsync(CriarProjetoDeViagemCommand command)
     {
-        // ⚙️ Converter DateTime -> DateOnly
-        var dataSaida = DateOnly.FromDateTime(command.DataSaida);
-        var dataRetorno = DateOnly.FromDateTime(command.DataRetorno);
+        var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        // ⚙️ Tenta parsear Enum de forma segura
-        if (!Enum.TryParse<TipoProjeto>(command.Tipo, true, out var tipoProjeto))
-            throw new ArgumentException($"Tipo de projeto '{command.Tipo}' é inválido.");
+        // Para AutorId -> se UserId válido, usa o Guid real
+        Guid autorId = Guid.Empty;
+        if (Guid.TryParse(userId, out var parsedId))
+            autorId = parsedId;
 
-        // ⚙️ Definir autor padrão
-        const string autorSistema = "Sistema";
+        var criadoPor = string.IsNullOrWhiteSpace(userId) ? "Sistema" : userId;
 
-        // ⚙️ Cria projeto usando construtor rico
+        var tipoProjeto = Enum.Parse<TipoProjeto>(command.Tipo, true);
+
         var projeto = new ProjetoDeViagem(
             clienteId: command.ClienteId,
             nomeInterno: command.NomeInterno,
             origem: command.Origem,
             destino: command.Destino,
             objetivo: command.Objetivo,
-            dataSaida: dataSaida,
-            dataRetorno: dataRetorno,
+            dataSaida: DateOnly.FromDateTime(command.DataSaida),
+            dataRetorno: DateOnly.FromDateTime(command.DataRetorno),
             tipo: tipoProjeto,
-            criadoPor: autorSistema
+            criadoPor: criadoPor
         );
 
-        // ⚙️ Usa método do Agregado pra adicionar observação
         if (!string.IsNullOrWhiteSpace(command.ObservacaoInicial))
         {
-            projeto.AdicionarObservacao(command.ObservacaoInicial, Guid.Empty);
+            projeto.AdicionarObservacao(command.ObservacaoInicial, autorId);
         }
 
         await _repository.AdicionarAsync(projeto);
@@ -52,4 +55,5 @@ public class CriarProjetoDeViagemCommandHandler
 
         return projeto.Id;
     }
+
 }
