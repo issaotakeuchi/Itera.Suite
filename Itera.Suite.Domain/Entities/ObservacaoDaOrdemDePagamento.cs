@@ -4,7 +4,7 @@ namespace Itera.Suite.Domain.Entities;
 
 public class ObservacaoDaOrdemDePagamento : ObservacaoBase
 {
-    public Guid OrdemDeProgramadoId { get; set; }
+    public Guid OrdemDePagamentoId { get; set; }
     public OrdemDePagamento OrdemDePagamento { get; set; }
 }
 

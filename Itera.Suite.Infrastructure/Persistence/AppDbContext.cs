@@ -16,7 +16,7 @@ namespace Itera.Suite.Infrastructure.Data
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
 
-        // NOVOS DbSets financeiros
+        // DbSets financeiros
         public DbSet<OrdemDePagamento> OrdensDePagamento { get; set; }
         public DbSet<PagamentoDaOrdemDePagamento> PagamentosDaOrdemDePagamento { get; set; }
         public DbSet<QuitacaoDaOrdemDePagamento> QuitacoesDaOrdemDePagamento { get; set; }
@@ -33,7 +33,12 @@ namespace Itera.Suite.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // ✅ Conversões de Enum como string
+            base.OnModelCreating(modelBuilder);
+
+            // ✅ Opcional: se usar IEntityTypeConfiguration no futuro
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+            // ✅ Conversões de Enums para string
             modelBuilder.Entity<ProjetoDeViagem>()
                 .Property(p => p.Status)
                 .HasConversion<string>();
@@ -58,63 +63,99 @@ namespace Itera.Suite.Infrastructure.Data
                 .Property(p => p.FormaPagamento)
                 .HasConversion<string>();
 
-            // ✅ Relacionamentos principais
+            // ✅ ProjetoDeViagem -> ObservacoesProjeto
             modelBuilder.Entity<ProjetoDeViagem>()
                 .HasMany(p => p.Observacoes)
                 .WithOne(o => o.ProjetoDeViagem)
                 .HasForeignKey(o => o.ProjetoDeViagemId);
 
+            modelBuilder.Entity<ProjetoDeViagem>()
+                .Navigation(p => p.Observacoes)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            // ✅ ItemDeCusto -> ObservacoesItem
             modelBuilder.Entity<ItemDeCusto>()
                 .HasMany(i => i.Observacoes)
                 .WithOne(o => o.ItemDeCusto)
                 .HasForeignKey(o => o.ItemDeCustoId);
 
             modelBuilder.Entity<ItemDeCusto>()
+                .Navigation(i => i.Observacoes)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            // ✅ ItemDeCusto -> Pagamentos
+            modelBuilder.Entity<ItemDeCusto>()
                 .HasMany(i => i.Pagamentos)
                 .WithOne(p => p.ItemDeCusto)
                 .HasForeignKey(p => p.ItemDeCustoId);
 
             modelBuilder.Entity<ItemDeCusto>()
+                .Navigation(i => i.Pagamentos)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            // ✅ ItemDeCusto -> HistoricoStatus
+            modelBuilder.Entity<ItemDeCusto>()
                 .HasMany(i => i.HistoricoStatus)
                 .WithOne()
                 .HasForeignKey("ItemDeCustoId");
 
+            modelBuilder.Entity<ItemDeCusto>()
+                .Navigation(i => i.HistoricoStatus)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            // ✅ OrdemDePagamento -> ObservacoesOrdemDePagamento
             modelBuilder.Entity<OrdemDePagamento>()
                 .HasMany(o => o.Observacoes)
                 .WithOne(o => o.OrdemDePagamento)
-                .HasForeignKey(o => o.OrdemDeProgramadoId);
+                .HasForeignKey(o => o.OrdemDePagamentoId);
 
+            modelBuilder.Entity<OrdemDePagamento>()
+                .Navigation(o => o.Observacoes)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            // ✅ OrdemDePagamento -> Quitacoes
             modelBuilder.Entity<OrdemDePagamento>()
                 .HasMany(o => o.Quitacoes)
                 .WithOne(q => q.OrdemDePagamento)
                 .HasForeignKey(q => q.OrdemDePagamentoId);
 
+            // ✅ PagamentoDaOrdemDePagamento -> Quitacoes
             modelBuilder.Entity<PagamentoDaOrdemDePagamento>()
                 .HasMany(p => p.Quitacoes)
                 .WithOne(q => q.Pagamento)
                 .HasForeignKey(q => q.PagamentoDaOrdemDePagamentoId);
 
+            // ✅ PagamentoDaOrdemDePagamento -> ComprovanteDaOrdemDePagamento (One-to-One)
             modelBuilder.Entity<PagamentoDaOrdemDePagamento>()
                 .HasOne(p => p.ComprovanteDaOrdemDePagamento)
                 .WithOne(c => c.Pagamento)
                 .HasForeignKey<ComprovanteDaOrdemDePagamento>(c => c.PagamentoDaOrdemDePagamentoId);
 
+            // ✅ QuitacaoDaOrdemDePagamento -> ObservacoesQuitacaoDaOrdemDePagamento
             modelBuilder.Entity<QuitacaoDaOrdemDePagamento>()
                 .HasMany(q => q.Observacoes)
                 .WithOne(o => o.QuitacaoDaOrdemDePagamento)
                 .HasForeignKey(o => o.QuitacaoDaOrdemDePagamentoId);
 
+            // ✅ Cliente -> Projetos
             modelBuilder.Entity<Cliente>()
                 .HasMany(c => c.Projetos)
                 .WithOne(p => p.Cliente)
                 .HasForeignKey(p => p.ClienteId);
 
+            modelBuilder.Entity<Cliente>()
+                .Navigation(c => c.Projetos)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            // ✅ Fornecedor -> ItensDeCusto
             modelBuilder.Entity<Fornecedor>()
                 .HasMany(f => f.ItensDeCusto)
                 .WithOne(i => i.Fornecedor)
                 .HasForeignKey(i => i.FornecedorId);
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Fornecedor>()
+                .Navigation(f => f.ItensDeCusto)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }
