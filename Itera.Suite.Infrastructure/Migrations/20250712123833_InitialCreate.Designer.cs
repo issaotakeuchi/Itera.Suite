@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Itera.Suite.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250711131504_InitialCreate")]
+    [Migration("20250712123833_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,16 +31,26 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AtualizadoPor")
+                        .HasColumnType("text");
+
                     b.Property<string>("ContatoPrincipal")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CriadoPor")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Documento")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Nome")
@@ -48,10 +58,9 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Telefone")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Tipo")
+                    b.Property<int?>("Tipo")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -140,8 +149,21 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AtualizadoPor")
+                        .HasColumnType("text");
+
                     b.Property<int>("Categoria")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CriadoPor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -348,12 +370,18 @@ namespace Itera.Suite.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AtualizadoPor")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("ClienteId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("CriadoPor")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("timestamp with time zone");
@@ -392,7 +420,7 @@ namespace Itera.Suite.Infrastructure.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.ToTable("Projetos");
+                    b.ToTable("ProjetosDeViagem", (string)null);
                 });
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.QuitacaoDaOrdemDePagamento", b =>

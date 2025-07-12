@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
         if (user == null)
             return Unauthorized("Usuário não encontrado.");
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Senha, false);
+        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
         if (!result.Succeeded)
             return Unauthorized("Senha inválida.");
 

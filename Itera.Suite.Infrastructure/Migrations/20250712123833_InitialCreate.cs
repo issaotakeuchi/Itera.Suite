@@ -58,11 +58,15 @@ namespace Itera.Suite.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nome = table.Column<string>(type: "text", nullable: false),
-                    Documento = table.Column<string>(type: "text", nullable: false),
-                    Tipo = table.Column<int>(type: "integer", nullable: false),
-                    ContatoPrincipal = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Telefone = table.Column<string>(type: "text", nullable: false)
+                    Documento = table.Column<string>(type: "text", nullable: true),
+                    Tipo = table.Column<int>(type: "integer", nullable: true),
+                    ContatoPrincipal = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    Telefone = table.Column<string>(type: "text", nullable: true),
+                    CriadoPor = table.Column<string>(type: "text", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AtualizadoPor = table.Column<string>(type: "text", nullable: true),
+                    DataAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -211,7 +215,7 @@ namespace Itera.Suite.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Projetos",
+                name: "ProjetosDeViagem",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -225,13 +229,15 @@ namespace Itera.Suite.Infrastructure.Migrations
                     Status = table.Column<string>(type: "text", nullable: false),
                     ClienteId = table.Column<Guid>(type: "uuid", nullable: false),
                     CriadoPor = table.Column<string>(type: "text", nullable: false),
-                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AtualizadoPor = table.Column<string>(type: "text", nullable: true),
+                    DataAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Projetos", x => x.Id);
+                    table.PrimaryKey("PK_ProjetosDeViagem", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Projetos_Clientes_ClienteId",
+                        name: "FK_ProjetosDeViagem_Clientes_ClienteId",
                         column: x => x.ClienteId,
                         principalTable: "Clientes",
                         principalColumn: "Id",
@@ -272,7 +278,11 @@ namespace Itera.Suite.Infrastructure.Migrations
                     Diarias = table.Column<int>(type: "integer", nullable: false),
                     Quantidade = table.Column<int>(type: "integer", nullable: false),
                     ValorUnitario = table.Column<decimal>(type: "numeric", nullable: false),
-                    StatusAtual = table.Column<string>(type: "text", nullable: false)
+                    StatusAtual = table.Column<string>(type: "text", nullable: false),
+                    CriadoPor = table.Column<string>(type: "text", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AtualizadoPor = table.Column<string>(type: "text", nullable: true),
+                    DataAtualizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -283,9 +293,9 @@ namespace Itera.Suite.Infrastructure.Migrations
                         principalTable: "Fornecedores",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ItensDeCusto_Projetos_ProjetoDeViagemId",
+                        name: "FK_ItensDeCusto_ProjetosDeViagem_ProjetoDeViagemId",
                         column: x => x.ProjetoDeViagemId,
-                        principalTable: "Projetos",
+                        principalTable: "ProjetosDeViagem",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -305,9 +315,9 @@ namespace Itera.Suite.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_ObservacoesProjeto", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ObservacoesProjeto_Projetos_ProjetoDeViagemId",
+                        name: "FK_ObservacoesProjeto_ProjetosDeViagem_ProjetoDeViagemId",
                         column: x => x.ProjetoDeViagemId,
-                        principalTable: "Projetos",
+                        principalTable: "ProjetosDeViagem",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -529,8 +539,8 @@ namespace Itera.Suite.Infrastructure.Migrations
                 column: "ItemDeCustoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projetos_ClienteId",
-                table: "Projetos",
+                name: "IX_ProjetosDeViagem_ClienteId",
+                table: "ProjetosDeViagem",
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
@@ -607,7 +617,7 @@ namespace Itera.Suite.Infrastructure.Migrations
                 name: "Fornecedores");
 
             migrationBuilder.DropTable(
-                name: "Projetos");
+                name: "ProjetosDeViagem");
 
             migrationBuilder.DropTable(
                 name: "Clientes");

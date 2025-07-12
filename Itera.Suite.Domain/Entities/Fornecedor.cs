@@ -13,7 +13,10 @@ public class Fornecedor : AuditableEntity
     private readonly List<ItemDeCusto> _itensDeCusto = new();
     public IReadOnlyCollection<ItemDeCusto> ItensDeCusto => _itensDeCusto.AsReadOnly();
 
-    protected Fornecedor() { } // EF
+    // Construtor para EF Core
+    #pragma warning disable CS8618
+    protected Fornecedor() { }
+    #pragma warning restore CS8618
 
     public Fornecedor(
         string nome,

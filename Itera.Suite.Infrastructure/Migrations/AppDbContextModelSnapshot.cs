@@ -417,7 +417,7 @@ namespace Itera.Suite.Infrastructure.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.ToTable("ProjetosDeViagem");
+                    b.ToTable("ProjetosDeViagem", (string)null);
                 });
 
             modelBuilder.Entity("Itera.Suite.Domain.Entities.QuitacaoDaOrdemDePagamento", b =>

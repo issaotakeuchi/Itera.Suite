@@ -22,6 +22,11 @@ public class CriarItemDeCustoCommandHandler
 
     public async Task<Guid> HandleAsync(CriarItemDeCustoCommand command)
     {
+        if (string.IsNullOrWhiteSpace(command.Categoria))
+        {
+            throw new ArgumentException("Categoria é obrigatória e não pode ser vazia.");
+        }
+
         var categoria = Enum.Parse<CategoriaItemDeCusto>(command.Categoria, true);
 
         var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

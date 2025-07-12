@@ -60,6 +60,12 @@ namespace Itera.Suite.Infrastructure.Data
                 .HasConversion<string>();
 
             modelBuilder.Entity<ItemDeCusto>()
+                .HasOne(i => i.Fornecedor)
+                .WithMany(f => f.ItensDeCusto)
+                .HasForeignKey(i => i.FornecedorId)
+                .IsRequired(false); // ✅ FK opcional!
+
+            modelBuilder.Entity<ItemDeCusto>()
                 .HasMany(i => i.Observacoes)
                 .WithOne(o => o.ItemDeCusto)
                 .HasForeignKey(o => o.ItemDeCustoId);
