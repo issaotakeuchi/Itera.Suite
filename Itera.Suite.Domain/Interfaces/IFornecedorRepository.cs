@@ -6,6 +6,5 @@ public interface IFornecedorRepository
 {
     Task AdicionarAsync(Fornecedor fornecedor);
     Task<Fornecedor?> ObterPorIdAsync(Guid id);
-    Task<IEnumerable<Fornecedor>> ListarTodosAsync();
     Task SalvarAlteracoesAsync();
 }

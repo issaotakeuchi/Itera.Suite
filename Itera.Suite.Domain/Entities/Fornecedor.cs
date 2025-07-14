@@ -40,4 +40,23 @@ public class Fornecedor : AuditableEntity
         CriadoPor = criadoPor;
         DataCriacao = DateTime.UtcNow;
     }
+
+    public void AtualizarDados(string? nome, string? contato, string? email, string? telefone, TipoServico? tipo, string atualizadoPor)
+    {
+        if (!string.IsNullOrWhiteSpace(nome)) Nome = nome;
+        Contato = contato ?? Contato;
+        Email = email ?? Email;
+        Telefone = telefone ?? Telefone;
+        TipoDeServico = tipo;
+
+        AtualizadoPor = atualizadoPor;
+        DataAtualizacao = DateTime.UtcNow;
+    }
+
+    public void Inativar(string atualizadoPor)
+    {
+        AtualizadoPor = atualizadoPor;
+        DataAtualizacao = DateTime.UtcNow;
+        // Se quiser: IsAtivo = false;
+    }
 }

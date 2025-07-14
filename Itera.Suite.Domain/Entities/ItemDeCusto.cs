@@ -96,4 +96,31 @@ public class ItemDeCusto : AuditableEntity
     }
 
     public decimal CalcularTotal() => Diarias * Quantidade * ValorUnitario;
+
+    public void AtualizarDados(
+    CategoriaItemDeCusto? categoria,
+    string? descricao,
+    int? diarias,
+    int? quantidade,
+    decimal? valorUnitario,
+    Guid? fornecedorId,
+    string atualizadoPor)
+    {
+        if (categoria.HasValue) Categoria = categoria.Value;
+        Descricao = descricao ?? Descricao;
+        Diarias = diarias ?? Diarias;
+        Quantidade = quantidade ?? Quantidade;
+        ValorUnitario = valorUnitario ?? ValorUnitario;
+        FornecedorId = fornecedorId;
+
+        AtualizadoPor = atualizadoPor;
+        DataAtualizacao = DateTime.UtcNow;
+    }
+
+    public void Inativar(string atualizadoPor)
+    {
+        AtualizadoPor = atualizadoPor;
+        DataAtualizacao = DateTime.UtcNow;
+        // Se quiser: IsAtivo = false;
+    }
 }

@@ -38,4 +38,34 @@ public class Cliente : AuditableEntity
         CriadoPor = criadoPor;
         DataCriacao = DateTime.UtcNow;
     }
+
+    public void AtualizarDados(
+    string? nome,
+    string? documento,
+    string? tipo,
+    string? contatoPrincipal,
+    string? email,
+    string? telefone,
+    string atualizadoPor)
+    {
+        Nome = nome ?? Nome;
+        Documento = documento ?? Documento;
+        if (!string.IsNullOrWhiteSpace(tipo))
+            Tipo = Enum.Parse<TipoCliente>(tipo, true);
+        ContatoPrincipal = contatoPrincipal ?? ContatoPrincipal;
+        Email = email ?? Email;
+        Telefone = telefone ?? Telefone;
+
+        AtualizadoPor = atualizadoPor;
+        DataAtualizacao = DateTime.UtcNow;
+    }
+
+    public void Inativar(string atualizadoPor)
+    {
+        AtualizadoPor = atualizadoPor;
+        DataAtualizacao = DateTime.UtcNow;
+        // Se quiser, cria um campo IsAtivo:
+        // IsAtivo = false;
+    }
+
 }

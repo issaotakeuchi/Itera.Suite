@@ -89,5 +89,39 @@ namespace Itera.Suite.Domain.Entities
 
             Status = StatusProjeto.Concluido;
         }
+
+        public void AtualizarDados(
+        string? nomeInterno,
+        string? origem,
+        string? destino,
+        string? objetivo,
+        DateOnly? dataSaida,
+        DateOnly? dataRetorno,
+        TipoProjeto? tipo,
+        string atualizadoPor)
+        {
+            if (!string.IsNullOrWhiteSpace(nomeInterno)) NomeInterno = nomeInterno;
+            if (!string.IsNullOrWhiteSpace(origem)) Origem = origem;
+            if (!string.IsNullOrWhiteSpace(destino)) Destino = destino;
+            if (!string.IsNullOrWhiteSpace(objetivo)) Objetivo = objetivo;
+            if (dataSaida.HasValue) DataSaida = dataSaida.Value;
+            if (dataRetorno.HasValue)
+            {
+                if (dataRetorno < DataSaida)
+                    throw new InvalidOperationException("Data de retorno não pode ser antes da saída.");
+                DataRetorno = dataRetorno.Value;
+            }
+            if (tipo.HasValue) Tipo = tipo.Value;
+
+            AtualizadoPor = atualizadoPor;
+            DataAtualizacao = DateTime.UtcNow;
+        }
+
+        public void Inativar(string atualizadoPor)
+        {
+            AtualizadoPor = atualizadoPor;
+            DataAtualizacao = DateTime.UtcNow;
+            // Se quiser: IsAtivo = false;
+        }
     }
 }

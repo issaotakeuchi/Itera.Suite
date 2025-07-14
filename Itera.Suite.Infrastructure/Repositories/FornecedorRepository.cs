@@ -1,11 +1,12 @@
-﻿using Itera.Suite.Domain.Entities;
+﻿using Itera.Suite.Application.DTOs;
+using Itera.Suite.Application.Interfaces;
 using Itera.Suite.Domain.Interfaces;
 using Itera.Suite.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Itera.Suite.Infrastructure.Repositories;
 
-public class FornecedorRepository : IFornecedorRepository
+public class FornecedorRepository : IFornecedorRepository, IFornecedorQuery
 {
     private readonly AppDbContext _context;
 
@@ -26,12 +27,32 @@ public class FornecedorRepository : IFornecedorRepository
             .FirstOrDefaultAsync(f => f.Id == id);
     }
 
-    public async Task<IEnumerable<Fornecedor>> ListarTodosAsync()
-    {
-        return await _context.Fornecedores
+    public async Task<IEnumerable<FornecedorDto>> ListarTodosAsync()
+        => await _context.Fornecedores
             .AsNoTracking()
-            .ToListAsync();
-    }
+            .Select(f => new FornecedorDto
+            {
+                Id = f.Id,
+                Nome = f.Nome,
+                Contato = f.Contato,
+                Email = f.Email,
+                Telefone = f.Telefone,
+                TipoDeServico = f.TipoDeServico.ToString()
+            }).ToListAsync();
+
+    public async Task<FornecedorDto?> ObterPorIdProjectionAsync(Guid id)
+        => await _context.Fornecedores
+            .AsNoTracking()
+            .Where(f => f.Id == id)
+            .Select(f => new FornecedorDto
+            {
+                Id = f.Id,
+                Nome = f.Nome,
+                Contato = f.Contato,
+                Email = f.Email,
+                Telefone = f.Telefone,
+                TipoDeServico = f.TipoDeServico.ToString()
+            }).FirstOrDefaultAsync();
 
     public async Task SalvarAlteracoesAsync()
     {

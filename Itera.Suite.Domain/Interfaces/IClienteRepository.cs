@@ -2,8 +2,7 @@
 
 public interface IClienteRepository
 {
+    Task<Cliente?> ObterPorIdAsync(Guid id); // Entity real
     Task AdicionarAsync(Cliente cliente);
-    Task<Cliente?> ObterPorIdAsync(Guid id);
-    Task<IEnumerable<Cliente>> ListarTodosAsync();
     Task SalvarAlteracoesAsync();
 }

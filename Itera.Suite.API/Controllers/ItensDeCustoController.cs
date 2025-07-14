@@ -1,6 +1,9 @@
 ﻿using Itera.Suite.Application.Commands.ItensDeCusto;
 using Itera.Suite.Application.Handlers.ItensDeCusto;
+using Itera.Suite.Application.Interfaces;
+using Itera.Suite.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Itera.Suite.API.Controllers;
 
@@ -8,24 +11,67 @@ namespace Itera.Suite.API.Controllers;
 [Route("api/[controller]")]
 public class ItensDeCustoController : ControllerBase
 {
-    private readonly CriarItemDeCustoCommandHandler _handler;
+    private readonly CriarItemDeCustoCommandHandler _criarHandler;
+    private readonly AtualizarItemDeCustoCommandHandler _atualizarHandler;
+    private readonly IItemDeCustoRepository _repository; // Entity
+    private readonly IItemDeCustoQuery _query;           // DTO
 
-    public ItensDeCustoController(CriarItemDeCustoCommandHandler handler)
+    public ItensDeCustoController(
+        CriarItemDeCustoCommandHandler criarHandler,
+        AtualizarItemDeCustoCommandHandler atualizarHandler,
+        IItemDeCustoRepository repository,
+        IItemDeCustoQuery query)
     {
-        _handler = handler;
+        _criarHandler = criarHandler;
+        _atualizarHandler = atualizarHandler;
+        _repository = repository;
+        _query = query;
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(CriarItemDeCustoCommand command)
     {
-        var id = await _handler.HandleAsync(command);
+        var id = await _criarHandler.HandleAsync(command);
         return CreatedAtAction(nameof(GetById), new { id }, new { id });
     }
 
-    [HttpGet("{id}")]
-    public IActionResult GetById(Guid id)
+    [HttpGet]
+    public async Task<IActionResult> Get()
     {
-        return Ok(new { id });
+        var itens = await _query.ListarTodosAsync();
+        return Ok(itens);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var item = await _query.ObterPorIdProjectionAsync(id);
+        if (item == null) return NotFound();
+        return Ok(item);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(Guid id, AtualizarItemDeCustoCommand command)
+    {
+        if (id != command.Id)
+            return BadRequest("Id da rota não confere com o payload.");
+
+        await _atualizarHandler.HandleAsync(command);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var item = await _repository.ObterPorIdAsync(id);
+        if (item == null) return NotFound();
+
+        var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var atualizadoPor = string.IsNullOrWhiteSpace(userId) ? "Sistema" : userId;
+
+        item.Inativar(atualizadoPor);
+        await _repository.SalvarAlteracoesAsync();
+
+        return NoContent();
     }
 }
-

@@ -1,11 +1,13 @@
-﻿using Itera.Suite.Domain.Entities;
+﻿using Itera.Suite.Application.DTOs;
+using Itera.Suite.Application.Interfaces;
+using Itera.Suite.Domain.Entities;
 using Itera.Suite.Domain.Interfaces;
 using Itera.Suite.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Itera.Suite.Infrastructure.Repositories;
 
-public class ProjetoDeViagemRepository : IProjetoDeViagemRepository
+public class ProjetoDeViagemRepository : IProjetoDeViagemRepository, IProjetoDeViagemQuery
 {
     private readonly AppDbContext _context;
 
@@ -23,13 +25,6 @@ public class ProjetoDeViagemRepository : IProjetoDeViagemRepository
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task<List<ProjetoDeViagem>> ListarTodosAsync()
-    {
-        return await _context.ProjetosDeViagem
-            .Include(p => p.Cliente)
-            .ToListAsync();
-    }
-
     public async Task AdicionarAsync(ProjetoDeViagem projeto)
     {
         await _context.ProjetosDeViagem.AddAsync(projeto);
@@ -39,4 +34,42 @@ public class ProjetoDeViagemRepository : IProjetoDeViagemRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    // Query (DTO)
+    public async Task<IEnumerable<ProjetoDeViagemDto>> ListarTodosAsync()
+        => await _context.ProjetosDeViagem
+            .AsNoTracking()
+            .Select(p => new ProjetoDeViagemDto
+            {
+                Id = p.Id,
+                NomeInterno = p.NomeInterno,
+                Origem = p.Origem,
+                Destino = p.Destino,
+                Objetivo = p.Objetivo,
+                Tipo = p.Tipo.ToString(),
+                Status = p.Status.ToString(),
+                DataSaida = p.DataSaida,
+                DataRetorno = p.DataRetorno,
+                ClienteNome = p.Cliente.Nome
+            })
+            .ToListAsync();
+
+    public async Task<ProjetoDeViagemDto?> ObterPorIdProjectionAsync(Guid id)
+        => await _context.ProjetosDeViagem
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Select(p => new ProjetoDeViagemDto
+            {
+                Id = p.Id,
+                NomeInterno = p.NomeInterno,
+                Origem = p.Origem,
+                Destino = p.Destino,
+                Objetivo = p.Objetivo,
+                Tipo = p.Tipo.ToString(),
+                Status = p.Status.ToString(),
+                DataSaida = p.DataSaida,
+                DataRetorno = p.DataRetorno,
+                ClienteNome = p.Cliente.Nome
+            })
+            .FirstOrDefaultAsync();
 }
