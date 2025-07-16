@@ -37,6 +37,7 @@ public class AtualizarFornecedorCommandHandler
             email: command.Email,
             telefone: command.Telefone,
             tipo: tipo,
+            ativo: command.Ativo,
             atualizadoPor: atualizadoPor
         );
 

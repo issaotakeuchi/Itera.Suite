@@ -1,17 +1,99 @@
 ﻿@inherits LayoutComponentBase
-@using Itera.Suite.Front.Layout
 
+@using Microsoft.AspNetCore.Components.Authorization
+@using Itera.Suite.Front.Services.Auth
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
 
-<PageTitle>Itera.Suite.Front</PageTitle>
+<RadzenLayout>
+    <!-- HEADER padrão Radzen -->
+    <RadzenHeader Style="background-color: lightslategray; color:white">
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     Gap="20px"
+                     Style="padding: 1rem;">
+            <!-- Botão de toggle da sidebar -->
+            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)"
+                                 Style="background-color:transparent; color:white" />
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+            <!-- Logo ou texto -->
+            <RadzenLabel Text="Itera Suite" />
 
-    <main>
-        <div class="content px-4">
-            @Body
-        </div>
-    </main>
-</div>
+            <!-- Info do usuário à direita -->
+            <div style="margin-left: auto; display: flex; align-items: center; padding-right: 1rem">
+                <RadzenIcon Icon="account_circle" Style="margin-right: 4px;" />
+                <AuthorizeView>
+                    <Authorized Context="authState">
+                        <span>@GetInitials(authState.User.Identity?.Name)</span>
+                    </Authorized>
+                    <NotAuthorized>
+                        <span>Anon</span>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </RadzenStack>
+    </RadzenHeader>
+
+    <!-- SIDEBAR padrão Radzen -->
+    <RadzenSidebar @bind-Expanded="@sidebarExpanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Dashboard" Icon="dashboard" Path="/" />
+            <RadzenPanelMenuItem Text="Projetos de Viagem" Icon="travel_explore" Path="/projetos" />
+            <RadzenPanelMenuItem Text="Clientes" Icon="group" Path="/clientes" />
+            <RadzenPanelMenuItem Text="Fornecedores" Icon="store" Path="/fornecedores" />
+            <RadzenPanelMenuItem Text="Relatórios" Icon="analytics" Path="/relatorios" />
+
+            <AuthorizeView>
+                <Authorized>
+                    <RadzenPanelMenuItem Text="Sair" Icon="logout">
+                        <Template>
+                            <RadzenButton Icon="logout"
+                                          Text="Sair"
+                                          Click="@Logout"
+                                          ButtonStyle="ButtonStyle.Secondary"
+                                          Style="width: 100%;" />
+                        </Template>
+                    </RadzenPanelMenuItem>
+                </Authorized>
+            </AuthorizeView>
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+
+    <!-- BODY padrão Radzen -->
+    <RadzenBody Style="padding: 2rem;">
+        @Body
+    </RadzenBody>
+
+    <!-- FOOTER padrão Radzen -->
+    <RadzenFooter Style="text-align: center; padding: 1rem; background-color:lightslategray; color:white">
+        &copy; 2025 Itera Suite — Todos os direitos reservados.
+    </RadzenFooter>
+</RadzenLayout>
+
+<!-- Infraestrutura Radzen -->
+<RadzenNotification />
+<RadzenDialog />
+<RadzenTooltip />
+<RadzenContextMenu />
+
+@code {
+    bool sidebarExpanded = true;
+
+    private async Task Logout()
+    {
+        await AuthService.Logout();
+        NavigationManager.NavigateTo("login", forceLoad: true);
+    }
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "Anon";
+
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 1)
+            return parts[0].Substring(0, 1).ToUpperInvariant();
+        else
+            return string.Concat(parts[0][0], parts[1][0]).ToUpperInvariant();
+    }
+}

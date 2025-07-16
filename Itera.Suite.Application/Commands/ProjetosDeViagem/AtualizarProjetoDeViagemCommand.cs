@@ -10,4 +10,5 @@ public class AtualizarProjetoDeViagemCommand
     public DateTime? DataSaida { get; set; }
     public DateTime? DataRetorno { get; set; }
     public string? Tipo { get; set; }
+    public string? Status { get; set; }
 }

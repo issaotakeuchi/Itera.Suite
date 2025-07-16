@@ -1,0 +1,41 @@
+﻿@using Itera.Suite.Front.Services.Auth
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+@page "/login"
+
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 500px;">
+    <RadzenLogin AllowRememberMe="false"
+                 AllowResetPassword="false"
+                 AllowRegister="false"
+                 FormFieldVariant="Variant.Filled"
+                 Login="@HandleLogin" />
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+    <RadzenAlert Severity="AlertSeverity.Danger"
+                 Summary="Erro"
+                 Text="@errorMessage"
+                 Style="margin-top: 1rem;" />
+    }
+</RadzenCard>
+
+@code {
+    private LoginRequest loginModel = new();
+    private string errorMessage;
+
+    private async Task HandleLogin(LoginArgs args)
+    {
+        loginModel.Email = args.Username;
+        loginModel.Password = args.Password;
+
+        var result = await AuthService.Login(loginModel);
+
+        if (result.IsSuccess)
+        {
+            NavigationManager.NavigateTo("/dashboard");
+        }
+        else
+        {
+            errorMessage = result.ErrorMessage ?? "Erro ao autenticar.";
+        }
+    }
+}

@@ -98,6 +98,7 @@ namespace Itera.Suite.Domain.Entities
         DateOnly? dataSaida,
         DateOnly? dataRetorno,
         TipoProjeto? tipo,
+        StatusProjeto? status,
         string atualizadoPor)
         {
             if (!string.IsNullOrWhiteSpace(nomeInterno)) NomeInterno = nomeInterno;
@@ -112,6 +113,7 @@ namespace Itera.Suite.Domain.Entities
                 DataRetorno = dataRetorno.Value;
             }
             if (tipo.HasValue) Tipo = tipo.Value;
+            if (status.HasValue) Status = status.Value;
 
             AtualizadoPor = atualizadoPor;
             DataAtualizacao = DateTime.UtcNow;

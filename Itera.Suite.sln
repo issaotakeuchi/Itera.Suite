@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itera.Suite.Infrastructure"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itera.Suite.Shared", "Itera.Suite.Shared\Itera.Suite.Shared.csproj", "{3F889A75-3282-44D6-A412-9C4BAA49AF18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itera.Suite.Front", "Itera.Suite.Front\Itera.Suite.Front.csproj", "{4F8BF890-E61B-4F48-99CE-DC3B77BB714A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itera.Suite.Front", "Itera.Suite.Front\Itera.Suite.Front.csproj", "{4F8BF890-E61B-4F48-99CE-DC3B77BB714A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

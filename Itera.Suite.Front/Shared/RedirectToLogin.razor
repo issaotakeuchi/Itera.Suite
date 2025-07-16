@@ -1,0 +1,13 @@
+﻿@inject NavigationManager Navigation
+
+<p>Redirecionando para login...</p>
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (!Navigation.Uri.Contains("/login", StringComparison.OrdinalIgnoreCase))
+        {
+            Navigation.NavigateTo($"login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}");
+        }
+    }
+}

@@ -24,6 +24,7 @@ public class Fornecedor : AuditableEntity
         string? contato = null,
         string? email = null,
         string? telefone = null,
+        bool ativo = true,
         TipoServico? tipoDeServico = null)
     {
         if (string.IsNullOrWhiteSpace(nome))
@@ -36,19 +37,19 @@ public class Fornecedor : AuditableEntity
         Email = email;
         Telefone = telefone;
         TipoDeServico = tipoDeServico;
-
+        Ativo = ativo;
         CriadoPor = criadoPor;
         DataCriacao = DateTime.UtcNow;
     }
 
-    public void AtualizarDados(string? nome, string? contato, string? email, string? telefone, TipoServico? tipo, string atualizadoPor)
+    public void AtualizarDados(string? nome, string? contato, string? email, string? telefone, TipoServico? tipo, bool ativo, string atualizadoPor)
     {
         if (!string.IsNullOrWhiteSpace(nome)) Nome = nome;
         Contato = contato ?? Contato;
         Email = email ?? Email;
         Telefone = telefone ?? Telefone;
         TipoDeServico = tipo;
-
+        Ativo = ativo;
         AtualizadoPor = atualizadoPor;
         DataAtualizacao = DateTime.UtcNow;
     }

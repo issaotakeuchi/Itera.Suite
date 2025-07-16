@@ -1,0 +1,55 @@
+﻿@page "/clientes/novo"
+
+@using Itera.Suite.Front.Services.Cliente
+@inject ClienteService ClienteService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Novo Cliente</PageTitle>
+
+<RadzenCard Style="max-width: 600px; margin: auto;">
+
+    <RadzenTemplateForm Data="@cliente" TItem="ClienteModel" Submit="@Salvar">
+        <RadzenFieldset Text="Novo Cliente">
+            <RadzenRow Gap="1rem">
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Nome" />
+                    <RadzenTextBox @bind-Value="cliente.Nome" Name="Nome" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Email" />
+                    <RadzenTextBox @bind-Value="cliente.Email" Name="Email" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Telefone" />
+                    <RadzenTextBox @bind-Value="cliente.Telefone" Name="Telefone" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Documento" />
+                    <RadzenTextBox @bind-Value="cliente.Documento" Name="Documento" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Contato Principal" />
+                    <RadzenTextBox @bind-Value="cliente.ContatoPrincipal" Name="ContatoPrincipal" Style="width: 100%;" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenFieldset>
+
+        <RadzenButton ButtonType="ButtonType.Submit"
+                      Icon="save"
+                      Text="Salvar"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Style="margin-top: 1rem;" />
+
+    </RadzenTemplateForm>
+
+</RadzenCard>
+
+@code {
+    ClienteModel cliente = new ClienteModel();
+
+    async Task Salvar()
+    {
+        await ClienteService.Add(cliente);
+        NavigationManager.NavigateTo("/clientes");
+    }
+}

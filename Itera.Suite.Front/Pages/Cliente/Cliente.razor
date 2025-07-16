@@ -1,0 +1,93 @@
+﻿@page "/clientes"
+@using Itera.Suite.Front.Services.Cliente
+@using Microsoft.AspNetCore.Authorization
+@inject ClienteService ClienteService
+@inject Radzen.DialogService DialogService
+@inject Radzen.NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<RadzenStack Gap="1rem">
+
+    <!-- Painel de ação -->
+    <RadzenCard Variant="Variant.Outlined">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1.5rem" Wrap="FlexWrap.Wrap">
+            @if (selectedClientes?.Any() == true)
+            {
+                <div>
+                    Selecionado: <strong>@selectedClientes[0].Nome</strong> 
+                </div>
+
+                <RadzenButton Icon="edit"
+                              Text="Editar"
+                              ButtonStyle="ButtonStyle.Secondary"
+                              Click="@(() => OpenEditDialog(selectedClientes[0]))" />
+
+                <RadzenButton Icon="delete"
+                              Text="Deletar"
+                              ButtonStyle="ButtonStyle.Danger"
+                              Click="@(() => DeleteCliente(selectedClientes[0].Id))" />
+
+                <RadzenButton Text="Limpar Seleção" Click="@ClearSelection" />
+            }
+        </RadzenStack>
+    </RadzenCard>
+
+    <!-- Lista de clientes -->
+    <RadzenDataGrid Data="@clientes"
+                    TItem="ClienteModel"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    @bind-Value="@selectedClientes"
+                    AllowFiltering="true"
+                    AllowPaging="true"
+                    PageSize="5"
+                    AllowSorting="true">
+
+        <Columns>
+            <RadzenDataGridColumn Property="Nome" Title="Nome" />
+            <RadzenDataGridColumn Property="Email" Title="Email" />
+            <RadzenDataGridColumn Property="Telefone" Title="Telefone" />
+        </Columns>
+
+    </RadzenDataGrid>
+
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1.5rem" Wrap="FlexWrap.Wrap">
+        <RadzenButton Icon="add" Text="Novo Cliente" ButtonStyle="ButtonStyle.Primary" Click="@NovoCliente" />
+    </RadzenStack>
+
+</RadzenStack>
+
+@code {
+    IEnumerable<ClienteModel> clientes;
+    IList<ClienteModel> selectedClientes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await ClienteService.GetAll();
+        selectedClientes = new List<ClienteModel>();
+    }
+
+    void ClearSelection() => selectedClientes = null;
+
+    async Task OpenEditDialog(ClienteModel cliente)
+    {
+        NavigationManager.NavigateTo($"/clientes/editar/{cliente.Id}");
+    }
+
+    async Task DeleteCliente(Guid id)
+    {
+        var confirmed = await DialogService.Confirm("Confirma excluir?", "Confirmação");
+        if (confirmed == true)
+        {
+            await ClienteService.Delete(id);
+            NotificationService.Notify(Radzen.NotificationSeverity.Success, "Sucesso", "Cliente removido");
+            clientes = await ClienteService.GetAll();
+        }
+    }
+
+    void NovoCliente()
+    {
+        NavigationManager.NavigateTo("/clientes/novo");
+    }
+
+}

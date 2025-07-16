@@ -1,0 +1,61 @@
+﻿@page "/fornecedores/novo"
+
+@using Itera.Suite.Front.Services.Fornecedor
+@inject FornecedorService FornecedorService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Novo Fornecedor</PageTitle>
+
+<RadzenCard Style="max-width: 600px; margin: auto;">
+
+    <RadzenTemplateForm Data="@fornecedor" TItem="FornecedorModel" Submit="@Salvar">
+        <RadzenFieldset Text="Novo Fornecedor">
+            <RadzenRow Gap="1rem">
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Nome" />
+                    <RadzenTextBox @bind-Value="fornecedor.Nome" Name="Nome" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Contato" />
+                    <RadzenTextBox @bind-Value="fornecedor.Contato" Name="Contato" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Email" />
+                    <RadzenTextBox @bind-Value="fornecedor.Email" Name="Email" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Telefone" />
+                    <RadzenTextBox @bind-Value="fornecedor.Telefone" Name="Telefone" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="TipoDeServico" />
+                    <RadzenTextBox @bind-Value="fornecedor.TipoDeServico" Name="TipoDeServico" Style="width: 100%;" />
+                </RadzenColumn>
+                <RadzenColumn Size="12">
+                    <RadzenLabel Text="Ativo" />
+                    <RadzenSwitch @bind-Value="fornecedor.Ativo" TValue="bool" />
+                </RadzenColumn>
+
+            </RadzenRow>
+        </RadzenFieldset>
+
+        <RadzenButton ButtonType="ButtonType.Submit"
+                      Icon="save"
+                      Text="Salvar"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Style="margin-top: 1rem;" />
+
+    </RadzenTemplateForm>
+
+</RadzenCard>
+
+@code {
+    FornecedorModel fornecedor = new FornecedorModel { Ativo = true };
+
+
+    async Task Salvar()
+    {
+        await FornecedorService.Add(fornecedor);
+        NavigationManager.NavigateTo("/fornecedores");
+    }
+}

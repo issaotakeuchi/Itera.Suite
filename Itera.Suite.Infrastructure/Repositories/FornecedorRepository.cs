@@ -37,7 +37,8 @@ public class FornecedorRepository : IFornecedorRepository, IFornecedorQuery
                 Contato = f.Contato,
                 Email = f.Email,
                 Telefone = f.Telefone,
-                TipoDeServico = f.TipoDeServico.ToString()
+                TipoDeServico = f.TipoDeServico.ToString(),
+                Ativo = f.Ativo,
             }).ToListAsync();
 
     public async Task<FornecedorDto?> ObterPorIdProjectionAsync(Guid id)
@@ -51,7 +52,8 @@ public class FornecedorRepository : IFornecedorRepository, IFornecedorQuery
                 Contato = f.Contato,
                 Email = f.Email,
                 Telefone = f.Telefone,
-                TipoDeServico = f.TipoDeServico.ToString()
+                TipoDeServico = f.TipoDeServico.ToString(),
+                Ativo = f.Ativo,
             }).FirstOrDefaultAsync();
 
     public async Task SalvarAlteracoesAsync()

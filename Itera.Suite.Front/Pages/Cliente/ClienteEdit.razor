@@ -1,0 +1,74 @@
+﻿@page "/clientes/editar/{Id:guid}"
+
+@using Itera.Suite.Front.Services.Cliente
+@inject ClienteService ClienteService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Editar Cliente</PageTitle>
+
+@if (cliente == null)
+{
+    <RadzenProgressBar Mode="ProgressBarMode.Indeterminate" Style="height: 4px;" />
+}
+else
+{
+    <RadzenCard Style="max-width: 600px; margin: auto;">
+        <RadzenTemplateForm Data="@cliente" TItem="ClienteModel" Submit="@Salvar">
+            <RadzenFieldset Text="Informações do Cliente">
+                <RadzenRow Gap="1rem">
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenLabel Text="Nome" />
+                        <RadzenTextBox @bind-Value="cliente.Nome" Name="Nome" Style="width: 100%;" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenLabel Text="Contato Principal" />
+                        <RadzenTextBox @bind-Value="cliente.ContatoPrincipal" Name="ContatoPrincipal" Style="width: 100%;" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenLabel Text="Documento" />
+                        <RadzenTextBox @bind-Value="cliente.Documento" Name="Documento" Style="width: 100%;" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenLabel Text="Telefone" />
+                        <RadzenTextBox @bind-Value="cliente.Telefone" Name="Telefone" Style="width: 100%;" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12">
+                        <RadzenLabel Text="Email" />
+                        <RadzenTextBox @bind-Value="cliente.Email" Name="Email" Style="width: 100%;" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenFieldset>
+
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" class="rz-mt-4">
+                <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Salvar" ButtonStyle="ButtonStyle.Primary" />
+                <RadzenButton Icon="cancel" Text="Cancelar" Click="@Cancel" ButtonStyle="ButtonStyle.Light" />
+            </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenCard>
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    ClienteModel cliente = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        cliente = await ClienteService.GetById(Id);
+    }
+
+    async Task Salvar()
+    {
+        await ClienteService.Update(cliente);
+        NavigationManager.NavigateTo("/clientes");
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/clientes");
+    }
+}

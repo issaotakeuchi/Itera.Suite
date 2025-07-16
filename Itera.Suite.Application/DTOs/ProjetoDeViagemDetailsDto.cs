@@ -1,6 +1,6 @@
 ﻿namespace Itera.Suite.Application.DTOs;
 
-public class ProjetoDeViagemDto
+public class ProjetoDeViagemDetailsDto
 {
     public Guid Id { get; set; }
     public string NomeInterno { get; set; } = null!;
@@ -12,6 +12,8 @@ public class ProjetoDeViagemDto
     public DateOnly DataSaida { get; set; }
     public DateOnly DataRetorno { get; set; }
     public string ClienteNome { get; set; } = null!;
-    public Guid ClienteId { get; set; } // se precisar no Front
-    public decimal ValorTotalProvisionado { get; set; } // opcional, se quiser no grid
+    public decimal ValorTotalProvisionado { get; set; }
+
+    public List<ItemDeCustoDto> ItensDeCusto { get; set; } = new();
 }
+

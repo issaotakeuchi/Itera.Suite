@@ -32,6 +32,10 @@ public class ClienteRepository : IClienteRepository, IClienteQuery
             {
                 Id = c.Id,
                 Nome = c.Nome,
+                Email = c.Email,
+                ContatoPrincipal = c.ContatoPrincipal,
+                Documento = c.Documento, // CPF/CNPJ
+                Telefone = c.Telefone,
                 Projetos = c.Projetos.Select(p => new ProjetoResumoDto
                 {
                     Id = p.Id,
@@ -47,6 +51,10 @@ public class ClienteRepository : IClienteRepository, IClienteQuery
             {
                 Id = c.Id,
                 Nome = c.Nome,
+                Email = c.Email,
+                ContatoPrincipal = c.ContatoPrincipal,
+                Documento = c.Documento, // CPF/CNPJ
+                Telefone = c.Telefone,
                 Projetos = c.Projetos.Select(p => new ProjetoResumoDto
                 {
                     Id = p.Id,

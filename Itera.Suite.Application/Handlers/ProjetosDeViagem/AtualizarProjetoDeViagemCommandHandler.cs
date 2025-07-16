@@ -31,6 +31,10 @@ public class AtualizarProjetoDeViagemCommandHandler
         if (!string.IsNullOrWhiteSpace(command.Tipo))
             tipo = Enum.Parse<TipoProjeto>(command.Tipo, true);
 
+        StatusProjeto? status = null;
+        if (!string.IsNullOrWhiteSpace(command.Status))
+            status = Enum.Parse<StatusProjeto>(command.Status, true);
+
         projeto.AtualizarDados(
             nomeInterno: command.NomeInterno,
             origem: command.Origem,
@@ -39,6 +43,7 @@ public class AtualizarProjetoDeViagemCommandHandler
             dataSaida: command.DataSaida.HasValue ? DateOnly.FromDateTime(command.DataSaida.Value) : null,
             dataRetorno: command.DataRetorno.HasValue ? DateOnly.FromDateTime(command.DataRetorno.Value) : null,
             tipo: tipo,
+            status: status,
             atualizadoPor: atualizadoPor
         );
 
