@@ -63,7 +63,7 @@ namespace Itera.Suite.Infrastructure.Data
                 .HasOne(i => i.Fornecedor)
                 .WithMany(f => f.ItensDeCusto)
                 .HasForeignKey(i => i.FornecedorId)
-                .IsRequired(false); // ✅ FK opcional!
+                .IsRequired();
 
             modelBuilder.Entity<ItemDeCusto>()
                 .HasMany(i => i.Observacoes)

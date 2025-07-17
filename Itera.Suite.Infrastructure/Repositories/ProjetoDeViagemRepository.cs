@@ -72,4 +72,15 @@ public class ProjetoDeViagemRepository : IProjetoDeViagemRepository, IProjetoDeV
                 ClienteNome = p.Cliente.Nome
             })
             .FirstOrDefaultAsync();
+
+    public async Task<ProjetoDeViagem?> ObterPorIdComItensAsync(Guid id)
+    {
+        return await _context.ProjetosDeViagem
+            .Include(p => p.Cliente)
+            .Include(p => p.ItensDeCusto)
+                .ThenInclude(i => i.Fornecedor)
+            .Include(p => p.ItensDeCusto)
+                .ThenInclude(i => i.Pagamentos) // se quiser trazer Pagamentos já
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
 }

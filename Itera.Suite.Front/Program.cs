@@ -6,8 +6,8 @@ using Itera.Suite.Front;
 using Itera.Suite.Front.Services.Auth;
 using Itera.Suite.Front.Services.Shared;
 // Importa seus outros services de domínio também
-/*using Itera.Suite.Front.Services.ProjetoDeViagem;
-using Itera.Suite.Front.Services.ItemDeCusto;*/
+/*using Itera.Suite.Front.Services.ItemDeCusto;*/
+using Itera.Suite.Front.Services.ProjetoDeViagem;
 using Itera.Suite.Front.Services.Fornecedor;
 using Itera.Suite.Front.Services.Cliente;
 using Itera.Suite.Front.Shared.Auth;
@@ -57,8 +57,8 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddScoped<AuthService>();
 
 // ✅ Seus CRUD Services
-/*builder.Services.AddScoped<ProjetoDeViagemService>();
-builder.Services.AddScoped<ItemDeCustoService>();*/
+/*builder.Services.AddScoped<ItemDeCustoService>();*/
+builder.Services.AddScoped<ProjetoDeViagemService>();
 builder.Services.AddScoped<FornecedorService>();
 builder.Services.AddScoped<ClienteService>();
 

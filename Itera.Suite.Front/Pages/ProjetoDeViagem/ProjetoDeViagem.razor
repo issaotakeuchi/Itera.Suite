@@ -1,0 +1,78 @@
+﻿@page "/projetos-de-viagem"
+@using Itera.Suite.Front.Services.ProjetoDeViagem
+@using Microsoft.AspNetCore.Authorization
+@inject ProjetoDeViagemService ProjetoService
+@inject Radzen.DialogService DialogService
+@inject Radzen.NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<RadzenStack Gap="1rem">
+
+    <!-- Painel de ação -->
+    <RadzenCard Variant="Variant.Outlined">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1.5rem" Wrap="FlexWrap.Wrap">
+            @if (selectedProjetos?.Any() == true)
+            {
+                <div>
+                    Selecionado: <strong>@selectedProjetos[0].NomeInterno</strong>
+                </div>
+
+                <RadzenButton Icon="edit"
+                              Text="Editar"
+                              ButtonStyle="ButtonStyle.Secondary"
+                              Click="@(() => EditarProjeto(selectedProjetos[0]))" />
+
+                <RadzenButton Text="Limpar Seleção" Click="@ClearSelection" />
+            }
+        </RadzenStack>
+    </RadzenCard>
+
+    <!-- Lista de Projetos -->
+    <RadzenDataGrid Data="@projetos"
+                    TItem="ProjetoDeViagemModel"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    @bind-Value="@selectedProjetos"
+                    AllowFiltering="true"
+                    AllowPaging="true"
+                    PageSize="10"
+                    AllowSorting="true">
+
+        <Columns>
+            <RadzenDataGridColumn Property="NomeInterno" Title="Nome" />
+            <RadzenDataGridColumn Property="DataSaida" Title="Saída" FormatString="{0:dd/MM/yyyy}" />
+            <RadzenDataGridColumn Property="DataRetorno" Title="Retorno" FormatString="{0:dd/MM/yyyy}" />
+            <RadzenDataGridColumn Property="Status" Title="Status" />
+        </Columns>
+
+    </RadzenDataGrid>
+
+    <!-- Botão Novo -->
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1.5rem" Wrap="FlexWrap.Wrap">
+        <RadzenButton Icon="add" Text="Novo Projeto" ButtonStyle="ButtonStyle.Primary" Click="@NovoProjeto" />
+    </RadzenStack>
+
+</RadzenStack>
+
+@code {
+    IEnumerable<ProjetoDeViagemModel> projetos;
+    IList<ProjetoDeViagemModel> selectedProjetos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        projetos = await ProjetoService.GetAll();
+        selectedProjetos = new List<ProjetoDeViagemModel>();
+    }
+
+    void ClearSelection() => selectedProjetos = null;
+
+    void EditarProjeto(ProjetoDeViagemModel projeto)
+    {
+        NavigationManager.NavigateTo($"/projetos-de-viagem/editar/{projeto.Id}");
+    }
+
+    void NovoProjeto()
+    {
+        NavigationManager.NavigateTo("/projetos-de-viagem/novo");
+    }
+}

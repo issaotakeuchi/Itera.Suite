@@ -1,6 +1,8 @@
 ﻿using Itera.Suite.Application.Commands.ProjetosDeViagem;
+using Itera.Suite.Application.DTOs;
 using Itera.Suite.Application.Handlers.ProjetosDeViagem;
 using Itera.Suite.Application.Interfaces;
+using Itera.Suite.Application.Queries.ProjetosDeViagem;
 using Itera.Suite.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -50,12 +52,39 @@ public class ProjetosDeViagemController : ControllerBase
         return Ok(projetos);
     }
 
+    // ✅ GET BY ID: Details — SEM MediatR — usando ObterPorIdComItensAsync
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var projeto = await _query.ObterPorIdProjectionAsync(id);
+        var projeto = await _repository.ObterPorIdComItensAsync(id);
         if (projeto == null) return NotFound();
-        return Ok(projeto);
+
+        var dto = new ProjetoDeViagemDetailsDto
+        {
+            Id = projeto.Id,
+            NomeInterno = projeto.NomeInterno,
+            Origem = projeto.Origem,
+            Destino = projeto.Destino,
+            Objetivo = projeto.Objetivo,
+            Tipo = projeto.Tipo.ToString(),
+            Status = projeto.Status.ToString(),
+            DataSaida = projeto.DataSaida,
+            DataRetorno = projeto.DataRetorno,
+            ClienteNome = projeto.Cliente.Nome,
+            ValorTotalProvisionado = projeto.CalcularValorTotalProvisionado(),
+            ItensDeCusto = projeto.ItensDeCusto?
+                .Select(i => new ItemDeCustoDto
+                {
+                    Id = i.Id,
+                    Descricao = i.Descricao,
+                    FornecedorNome = i.Fornecedor.Nome,
+                    ValorTotal = i.Total,
+                    Status = i.StatusAtual.ToString()
+                })
+                .ToList() ?? new List<ItemDeCustoDto>()
+        };
+
+        return Ok(dto);
     }
 
     [HttpDelete("{id}")]

@@ -1,0 +1,71 @@
+﻿@page "/projetos-de-viagem/novo"
+@using Itera.Suite.Front.Services.ProjetoDeViagem
+@using Itera.Suite.Front.Services.Cliente
+@using Itera.Suite.Shared.Enums
+@inject ProjetoDeViagemService ProjetoService
+@inject ClienteService ClienteService
+@inject NavigationManager NavigationManager
+@inject Radzen.NotificationService NotificationService
+
+<RadzenCard Style="max-width: 700px; margin: auto;">
+
+    <RadzenFieldset Text="Novo Projeto de Viagem">
+        <RadzenStack Gap="1rem">
+
+            <RadzenTextBox Name="NomeInterno" @bind-Value="model.NomeInterno" Placeholder="Nome do Projeto" Style="width:100%" />
+            <RadzenTextBox Name="Origem" @bind-Value="model.Origem" Placeholder="Origem" Style="width:100%" />
+            <RadzenTextBox Name="Destino" @bind-Value="model.Destino" Placeholder="Destino" Style="width:100%" />
+            <RadzenTextBox Name="Objetivo" @bind-Value="model.Objetivo" Placeholder="Objetivo" Style="width:100%" />
+
+            <RadzenDropDown Data="@clientes"
+                            @bind-Value="model.ClienteId"
+                            TextProperty="Nome"
+                            ValueProperty="Id"
+                            Name="Cliente"
+                            Placeholder="Cliente"
+                            Style="width:100%" />
+
+            <RadzenDropDown Data="@tiposProjeto"
+                            @bind-Value="model.Tipo"
+                            Name="Tipo"
+                            Placeholder="Tipo de Projeto"
+                            Style="width:100%" />
+
+            <RadzenDatePicker @bind-Value="model.DataSaida" Name="DataSaida" DateFormat="dd/MM/yyyy" Style="width:100%" />
+            <RadzenDatePicker @bind-Value="model.DataRetorno" Name="DataRetorno" DateFormat="dd/MM/yyyy" Style="width:100%" />
+
+            <RadzenButton Text="Criar Projeto"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Size="ButtonSize.Small"
+                          Icon="add"
+                          Click="@Salvar"
+                          Style="align-self: flex-start" />
+
+        </RadzenStack>
+    </RadzenFieldset>
+</RadzenCard>
+
+@code {
+    ProjetoDeViagemCreateModel model = new();
+    IEnumerable<ClienteModel> clientes = new List<ClienteModel>();
+    IEnumerable<string> tiposProjeto = Enum.GetNames(typeof(TipoProjeto));
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await ClienteService.GetAll();
+    }
+
+    async Task Salvar()
+    {
+        var sucesso = await ProjetoService.Add(model);
+        if (sucesso)
+        {
+            NotificationService.Notify(Radzen.NotificationSeverity.Success, "Sucesso", "Projeto criado com sucesso!");
+            NavigationManager.NavigateTo("/projetos-de-viagem");
+        }
+        else
+        {
+            NotificationService.Notify(Radzen.NotificationSeverity.Error, "Erro", "Falha ao criar o projeto.");
+        }
+    }
+}

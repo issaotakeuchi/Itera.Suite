@@ -65,6 +65,7 @@ namespace Itera.Suite.Domain.Entities
             if (item == null) throw new ArgumentNullException(nameof(item));
             if (item.ValorUnitario <= 0) throw new ArgumentException("Valor do item deve ser maior que zero.");
             _itensDeCusto.Add(item);
+            if (item.FornecedorId == Guid.Empty) throw new ArgumentException("Item de custo precisa ter um fornecedor.");
         }
 
         public void AdicionarObservacao(string texto, Guid autorId)

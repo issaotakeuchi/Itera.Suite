@@ -12,4 +12,6 @@ public class ItemDeCustoDto
     public string StatusAtual { get; set; } = null!;
     public string? FornecedorNome { get; set; }
     public string ProjetoNome { get; set; } = null!;
+    public decimal ValorTotal { get; set; }  // 👈 ADICIONA ISSO!
+    public string Status { get; set; } = null!;
 }
