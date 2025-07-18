@@ -16,6 +16,9 @@ namespace Itera.Suite.Infrastructure.Data
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
 
+        public DbSet<BaseDeCalculo> BasesDeCalculo { get; set; }
+        public DbSet<ItemDeCustoAplicado> ItensDeCustoAplicados { get; set; }
+
         // ✅ DbSets financeiros
         public DbSet<OrdemDePagamento> OrdensDePagamento { get; set; }
         public DbSet<PagamentoDaOrdemDePagamento> PagamentosDaOrdemDePagamento { get; set; }
@@ -34,15 +37,12 @@ namespace Itera.Suite.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // ✅ Permite usar IEntityTypeConfiguration no futuro
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-            // ✅ --- PROJETO DE VIAGEM ---
+            // ✅ ProjetoDeViagem
             modelBuilder.Entity<ProjetoDeViagem>(builder =>
             {
-                builder.ToTable("ProjetosDeViagem"); // Força plural no schema
-
+                builder.ToTable("ProjetosDeViagem");
                 builder.Property(p => p.Status).HasConversion<string>();
                 builder.Property(p => p.Tipo).HasConversion<string>();
 
@@ -52,18 +52,40 @@ namespace Itera.Suite.Infrastructure.Data
 
                 builder.Navigation(p => p.Observacoes)
                        .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+                builder.HasMany(p => p.Bases)
+                       .WithOne()
+                       .HasForeignKey("ProjetoDeViagemId");
             });
 
-            // ✅ --- ITEM DE CUSTO ---
+            // ✅ BaseDeCalculo
+            modelBuilder.Entity<BaseDeCalculo>(builder =>
+            {
+                builder.Property(b => b.Markup).HasColumnType("numeric(10,2)");
+
+                builder.HasMany(b => b.Itens)
+                       .WithOne(i => i.BaseDeCalculo)
+                       .HasForeignKey(i => i.BaseDeCalculoId);
+            });
+
+            // ✅ ItemDeCustoAplicado
+            modelBuilder.Entity<ItemDeCustoAplicado>(builder =>
+            {
+                builder.Property(i => i.ValorEditado).HasColumnType("numeric(10,2)");
+                builder.HasOne(i => i.ItemDeCusto)
+                       .WithMany()
+                       .HasForeignKey(i => i.ItemDeCustoId);
+            });
+
+            // ✅ ItemDeCusto
             modelBuilder.Entity<ItemDeCusto>()
-                .Property(i => i.StatusAtual)
-                .HasConversion<string>();
+                .Property(i => i.StatusAtual).HasConversion<string>();
 
             modelBuilder.Entity<ItemDeCusto>()
                 .HasOne(i => i.Fornecedor)
                 .WithMany(f => f.ItensDeCusto)
                 .HasForeignKey(i => i.FornecedorId)
-                .IsRequired();
+                .IsRequired(false);
 
             modelBuilder.Entity<ItemDeCusto>()
                 .HasMany(i => i.Observacoes)
@@ -92,7 +114,7 @@ namespace Itera.Suite.Infrastructure.Data
                 .Navigation(i => i.HistoricoStatus)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            // ✅ --- FORNECEDOR ---
+            // ✅ Fornecedor
             modelBuilder.Entity<Fornecedor>()
                 .Property(f => f.TipoDeServico)
                 .HasConversion<string>();
@@ -106,7 +128,7 @@ namespace Itera.Suite.Infrastructure.Data
                 .Navigation(f => f.ItensDeCusto)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            // ✅ --- CLIENTE ---
+            // ✅ Cliente
             modelBuilder.Entity<Cliente>()
                 .HasMany(c => c.Projetos)
                 .WithOne(p => p.Cliente)
@@ -116,7 +138,7 @@ namespace Itera.Suite.Infrastructure.Data
                 .Navigation(c => c.Projetos)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            // ✅ --- ORDEM DE PAGAMENTO ---
+            // ✅ Ordem de Pagamento
             modelBuilder.Entity<OrdemDePagamento>()
                 .Property(p => p.Forma).HasConversion<string>();
 
@@ -137,7 +159,7 @@ namespace Itera.Suite.Infrastructure.Data
                 .WithOne(q => q.OrdemDePagamento)
                 .HasForeignKey(q => q.OrdemDePagamentoId);
 
-            // ✅ --- PAGAMENTO DA ORDEM ---
+            // ✅ Pagamento da Ordem
             modelBuilder.Entity<PagamentoDaOrdemDePagamento>()
                 .Property(p => p.FormaPagamento).HasConversion<string>();
 
@@ -151,7 +173,7 @@ namespace Itera.Suite.Infrastructure.Data
                 .WithOne(c => c.Pagamento)
                 .HasForeignKey<ComprovanteDaOrdemDePagamento>(c => c.PagamentoDaOrdemDePagamentoId);
 
-            // ✅ --- QUITAÇÃO ---
+            // ✅ Quitação
             modelBuilder.Entity<QuitacaoDaOrdemDePagamento>()
                 .HasMany(q => q.Observacoes)
                 .WithOne(o => o.QuitacaoDaOrdemDePagamento)

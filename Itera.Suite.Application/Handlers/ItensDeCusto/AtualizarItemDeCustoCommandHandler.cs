@@ -2,12 +2,7 @@
 using Itera.Suite.Domain.Interfaces;
 using Itera.Suite.Shared.Enums;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Itera.Suite.Application.Handlers.ItensDeCusto;
 
@@ -41,7 +36,8 @@ public class AtualizarItemDeCustoCommandHandler
             descricao: command.Descricao,
             diarias: command.Diarias,
             quantidade: command.Quantidade,
-            valorUnitario: command.ValorUnitario,
+            valorPadrao: command.ValorPadrao,
+            tipoCalculo: command.TipoCalculo,
             fornecedorId: command.FornecedorId,
             atualizadoPor: atualizadoPor
         );

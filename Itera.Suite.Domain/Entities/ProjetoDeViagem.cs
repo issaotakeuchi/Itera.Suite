@@ -17,9 +17,9 @@ namespace Itera.Suite.Domain.Entities
         public Guid ClienteId { get; private set; }
         public Cliente Cliente { get; private set; }
 
-        // 📌 Itens de Custo
-        private readonly List<ItemDeCusto> _itensDeCusto = new();
-        public IReadOnlyCollection<ItemDeCusto> ItensDeCusto => _itensDeCusto.AsReadOnly();
+        // Bases de cálculo (substituem os itens diretos)
+        private readonly List<BaseDeCalculo> _bases = new();
+        public IReadOnlyCollection<BaseDeCalculo> Bases => _bases.AsReadOnly();
 
         // 📌 Observações
         private readonly List<ObservacaoProjeto> _observacoes = new();
@@ -59,15 +59,6 @@ namespace Itera.Suite.Domain.Entities
             DataCriacao = DateTime.UtcNow;
         }
 
-        // ⚙️ Métodos do agregado
-        public void AdicionarItemDeCusto(ItemDeCusto item)
-        {
-            if (item == null) throw new ArgumentNullException(nameof(item));
-            if (item.ValorUnitario <= 0) throw new ArgumentException("Valor do item deve ser maior que zero.");
-            _itensDeCusto.Add(item);
-            if (item.FornecedorId == Guid.Empty) throw new ArgumentException("Item de custo precisa ter um fornecedor.");
-        }
-
         public void AdicionarObservacao(string texto, Guid autorId)
         {
             if (string.IsNullOrWhiteSpace(texto))
@@ -78,17 +69,10 @@ namespace Itera.Suite.Domain.Entities
             _observacoes.Add(new ObservacaoProjeto(texto, autorId));
         }
 
-        public decimal CalcularValorTotalProvisionado()
+        public void CriarNovaBase(string nome, decimal markup, string criadoPor)
         {
-            return _itensDeCusto.Sum(i => i.Total);
-        }
-
-        public void MarcarComoConcluido()
-        {
-            if (_itensDeCusto.Any(i => i.StatusAtual != StatusItemDeCusto.PagoIntegralmente))
-                throw new InvalidOperationException("Não é possível concluir: existem itens não pagos.");
-
-            Status = StatusProjeto.Concluido;
+            var baseNova = new BaseDeCalculo(nome, markup, criadoPor);
+            _bases.Add(baseNova);
         }
 
         public void AtualizarDados(

@@ -20,8 +20,9 @@ public class ProjetoDeViagemRepository : IProjetoDeViagemRepository, IProjetoDeV
     {
         return await _context.ProjetosDeViagem
             .Include(p => p.Cliente)
-            .Include(p => p.ItensDeCusto)
-                .ThenInclude(i => i.Pagamentos)
+            .Include(p => p.Bases)
+                .ThenInclude(b => b.Itens)
+                    .ThenInclude(i => i.ItemDeCusto)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
@@ -37,22 +38,29 @@ public class ProjetoDeViagemRepository : IProjetoDeViagemRepository, IProjetoDeV
 
     // Query (DTO)
     public async Task<IEnumerable<ProjetoDeViagemDto>> ListarTodosAsync()
-        => await _context.ProjetosDeViagem
+    {
+        var projetos = await _context.ProjetosDeViagem
             .AsNoTracking()
-            .Select(p => new ProjetoDeViagemDto
-            {
-                Id = p.Id,
-                NomeInterno = p.NomeInterno,
-                Origem = p.Origem,
-                Destino = p.Destino,
-                Objetivo = p.Objetivo,
-                Tipo = p.Tipo.ToString(),
-                Status = p.Status.ToString(),
-                DataSaida = p.DataSaida,
-                DataRetorno = p.DataRetorno,
-                ClienteNome = p.Cliente.Nome
-            })
+            .Include(p => p.Bases)
+            .Include(p => p.Cliente)
             .ToListAsync();
+
+        return projetos.Select(p => new ProjetoDeViagemDto
+        {
+            Id = p.Id,
+            NomeInterno = p.NomeInterno,
+            Origem = p.Origem,
+            Destino = p.Destino,
+            Objetivo = p.Objetivo,
+            Tipo = p.Tipo.ToString(),
+            Status = p.Status.ToString(),
+            DataSaida = p.DataSaida,
+            DataRetorno = p.DataRetorno,
+            ClienteNome = p.Cliente.Nome,
+            ClienteId = p.ClienteId,
+            ValorTotalProvisionado = p.Bases.FirstOrDefault(b => b.Confirmada)?.TotalComMarkup ?? 0
+        });
+    }
 
     public async Task<ProjetoDeViagemDto?> ObterPorIdProjectionAsync(Guid id)
         => await _context.ProjetosDeViagem
@@ -77,10 +85,14 @@ public class ProjetoDeViagemRepository : IProjetoDeViagemRepository, IProjetoDeV
     {
         return await _context.ProjetosDeViagem
             .Include(p => p.Cliente)
-            .Include(p => p.ItensDeCusto)
-                .ThenInclude(i => i.Fornecedor)
-            .Include(p => p.ItensDeCusto)
-                .ThenInclude(i => i.Pagamentos) // se quiser trazer Pagamentos já
+            .Include(p => p.Bases)
+                .ThenInclude(b => b.Itens)
+                    .ThenInclude(i => i.ItemDeCusto)
+                        .ThenInclude(i => i.Fornecedor)
+            .Include(p => p.Bases)
+                .ThenInclude(b => b.Itens)
+                    .ThenInclude(i => i.ItemDeCusto)
+                        .ThenInclude(i => i.Pagamentos)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 }

@@ -1,8 +1,9 @@
-﻿using Itera.Suite.Application.Commands.ProjetosDeViagem;
+﻿using Itera.Suite.Application.Commands.BasesDeCalculo;
+using Itera.Suite.Application.Commands.ProjetosDeViagem;
 using Itera.Suite.Application.DTOs;
+using Itera.Suite.Application.Handlers.BasesDeCalculo;
 using Itera.Suite.Application.Handlers.ProjetosDeViagem;
 using Itera.Suite.Application.Interfaces;
-using Itera.Suite.Application.Queries.ProjetosDeViagem;
 using Itera.Suite.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -13,17 +14,26 @@ public class ProjetosDeViagemController : ControllerBase
 {
     private readonly CriarProjetoDeViagemCommandHandler _criarHandler;
     private readonly AtualizarProjetoDeViagemCommandHandler _atualizarHandler;
+    private readonly CriarBaseDeCalculoCommandHandler _criarBaseHandler;
+    private readonly DefinirQuantidadesDaBaseCommandHandler _definirQuantidadesHandler;
+    private readonly ConfirmarBaseHandler _confirmarBaseHandler;
     private readonly IProjetoDeViagemRepository _repository; // Entity Commands
     private readonly IProjetoDeViagemQuery _query;           // DTO Query
 
     public ProjetosDeViagemController(
         CriarProjetoDeViagemCommandHandler criarHandler,
         AtualizarProjetoDeViagemCommandHandler atualizarHandler,
+        CriarBaseDeCalculoCommandHandler criarBaseHandler,
+        DefinirQuantidadesDaBaseCommandHandler definirQuantidadesHandler,
+        ConfirmarBaseHandler confirmarBaseHandler,
         IProjetoDeViagemRepository repository,
         IProjetoDeViagemQuery query)
     {
         _criarHandler = criarHandler;
         _atualizarHandler = atualizarHandler;
+        _criarBaseHandler = criarBaseHandler;
+        _definirQuantidadesHandler = definirQuantidadesHandler;
+        _confirmarBaseHandler = confirmarBaseHandler;
         _repository = repository;
         _query = query;
     }
@@ -59,6 +69,9 @@ public class ProjetosDeViagemController : ControllerBase
         var projeto = await _repository.ObterPorIdComItensAsync(id);
         if (projeto == null) return NotFound();
 
+        var baseConfirmada = projeto.Bases.FirstOrDefault(b => b.Confirmada);
+        var outrasBases = projeto.Bases.Where(b => !b.Confirmada).ToList();
+
         var dto = new ProjetoDeViagemDetailsDto
         {
             Id = projeto.Id,
@@ -71,17 +84,43 @@ public class ProjetosDeViagemController : ControllerBase
             DataSaida = projeto.DataSaida,
             DataRetorno = projeto.DataRetorno,
             ClienteNome = projeto.Cliente.Nome,
-            ValorTotalProvisionado = projeto.CalcularValorTotalProvisionado(),
-            ItensDeCusto = projeto.ItensDeCusto?
-                .Select(i => new ItemDeCustoDto
+            ValorTotalProvisionado = baseConfirmada?.TotalComMarkup ?? 0,
+
+            BaseConfirmada = baseConfirmada is not null
+                ? new BaseDeCalculoDto
                 {
-                    Id = i.Id,
-                    Descricao = i.Descricao,
-                    FornecedorNome = i.Fornecedor.Nome,
-                    ValorTotal = i.Total,
-                    Status = i.StatusAtual.ToString()
-                })
-                .ToList() ?? new List<ItemDeCustoDto>()
+                    Id = baseConfirmada.Id,
+                    Nome = baseConfirmada.Nome,
+                    Markup = baseConfirmada.Markup,
+                    QtdAlunos = baseConfirmada.QtdAlunos,
+                    QtdProfessores = baseConfirmada.QtdProfessores,
+                    QtdGuias = baseConfirmada.QtdGuias,
+                    QtdMotoristas = baseConfirmada.QtdMotoristas,
+                    MotoristaPermanece = baseConfirmada.MotoristaPermanece,
+                    Total = baseConfirmada.Total,
+                    TotalComMarkup = baseConfirmada.TotalComMarkup,
+                    Itens = baseConfirmada.Itens.Select(i => new ItemDeCustoAplicadoDto
+                    {
+                        Id = i.Id,
+                        Subtipo = i.Subtipo,
+                        QuantidadeTotal = i.QuantidadeTotal,
+                        QuantidadeCortesia = i.QuantidadeCortesia,
+                        ValorEditado = i.ValorEditado ?? i.ItemDeCusto.ValorPadrao,
+                        Total = i.Total,
+                        Categoria = i.ItemDeCusto.Categoria.ToString(),
+                        Descricao = i.ItemDeCusto.Descricao,
+                        Fornecedor = i.ItemDeCusto.Fornecedor?.Nome
+                    }).ToList()
+                }
+                : null,
+
+            OutrasBases = outrasBases.Select(b => new BaseDeCalculoResumoDto
+            {
+                Id = b.Id,
+                Nome = b.Nome,
+                Total = b.TotalComMarkup,
+                Confirmada = b.Confirmada
+            }).ToList()
         };
 
         return Ok(dto);
@@ -100,6 +139,33 @@ public class ProjetosDeViagemController : ControllerBase
 
         await _repository.SalvarAlteracoesAsync();
 
+        return NoContent();
+    }
+
+    [HttpPost("bases/{id}")]
+    public async Task<IActionResult> PostBase(Guid id, CriarBaseDeCalculoCommand command)
+    {
+        if (id != command.ProjetoDeViagemId)
+            return BadRequest("Id da rota não confere com o payload.");
+
+        await _criarBaseHandler.HandleAsync(command);
+        return NoContent();
+    }
+
+    [HttpPut("bases/{id}/quantidades")]
+    public async Task<IActionResult> DefinirQuantidades(Guid id, DefinirQuantidadesDaBaseCommand command)
+    {
+        if (id != command.BaseId)
+            return BadRequest("Id da rota não confere com o payload.");
+
+        await _definirQuantidadesHandler.HandleAsync(command);
+        return NoContent();
+    }
+
+    [HttpPut("{projetoId}/bases/{baseId}/confirmar")]
+    public async Task<IActionResult> ConfirmarBase(Guid projetoId, Guid baseId)
+    {
+        await _confirmarBaseHandler.HandleAsync(projetoId, baseId);
         return NoContent();
     }
 }

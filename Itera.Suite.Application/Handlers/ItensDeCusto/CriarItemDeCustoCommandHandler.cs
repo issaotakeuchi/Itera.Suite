@@ -38,7 +38,8 @@ public class CriarItemDeCustoCommandHandler
             descricao: command.Descricao,
             diarias: command.Diarias,
             quantidade: command.Quantidade,
-            valorUnitario: command.ValorUnitario,
+            valorPadrao: command.ValorPadrao,
+            command.TipoCalculo,
             fornecedorId: command.FornecedorId,
             criadoPor: criadoPor
         );

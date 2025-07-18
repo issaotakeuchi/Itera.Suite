@@ -14,6 +14,7 @@ using Itera.Suite.Application.Handlers.Clientes;
 using Itera.Suite.Application.Handlers.Fornecedores;
 using Itera.Suite.Application.Handlers.ItensDeCusto;
 using Itera.Suite.Application.Handlers.ProjetosDeViagem;
+using Itera.Suite.Application.Handlers.BasesDeCalculo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +87,7 @@ builder.Services.AddScoped<IItemDeCustoRepository, ItemDeCustoRepository>();
 builder.Services.AddScoped<IItemDeCustoQuery, ItemDeCustoRepository>();
 builder.Services.AddScoped<CriarItemDeCustoCommandHandler>();
 builder.Services.AddScoped<AtualizarItemDeCustoCommandHandler>();
+builder.Services.AddScoped<AlterarStatusItemDeCustoHandler>();
 
 
 builder.Services.AddScoped<IProjetoDeViagemRepository, ProjetoDeViagemRepository>();
@@ -93,7 +95,9 @@ builder.Services.AddScoped<IProjetoDeViagemQuery, ProjetoDeViagemRepository>();
 builder.Services.AddScoped<CriarProjetoDeViagemCommandHandler>();
 builder.Services.AddScoped<AtualizarProjetoDeViagemCommandHandler>();
 
-
+builder.Services.AddScoped<DefinirQuantidadesDaBaseCommandHandler>();
+builder.Services.AddScoped<IBaseDeCalculoRepository, BaseDeCalculoRepository>();
+builder.Services.AddScoped<ConfirmarBaseHandler>();
 
 // PARA USO DO STORAGE NO CLOUDFLARE
 builder.Services.AddScoped<IArquivoStorageService, CloudflareR2ArquivoStorageService>();

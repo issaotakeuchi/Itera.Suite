@@ -7,17 +7,22 @@ namespace Itera.Suite.Domain.Entities;
 public class ItemDeCusto : AuditableEntity
 {
     public Guid ProjetoDeViagemId { get; private set; }
-    public ProjetoDeViagem ProjetoDeViagem { get; private set; }
-    public CategoriaItemDeCusto Categoria { get; private set; }        // Ex: "Transporte", "Hospedagem", "Guia"
-    public string? Descricao { get; private set; }         // Ex: "Ônibus Transcomin", "Pousada Cavernas"
+    public ProjetoDeViagem ProjetoDeViagem { get; private set; } = null!;
+
+    public CategoriaItemDeCusto Categoria { get; private set; }       // Ex: Transporte, Hospedagem, etc.
+    public string? Descricao { get; private set; }
+
     public Guid? FornecedorId { get; private set; }
-    public Fornecedor? Fornecedor { get; private set; }        // Nome da empresa ou pessoa prestadora
-    public int Diarias { get; private set; }             // Ex: 3
-    public int Quantidade { get; private set; }           // Ex: 24
-    public decimal ValorUnitario { get; private set; }    // Ex: 2.62
-    
+    public Fornecedor? Fornecedor { get; private set; }
+
+    public int Diarias { get; private set; }
+    public int Quantidade { get; private set; }
+    public decimal ValorPadrao { get; private set; }                  // Ex: 5.00
+
+    public TipoCalculoItem TipoCalculo { get; private set; }
+
     [NotMapped]
-    public decimal Total => Diarias * Quantidade * ValorUnitario;
+    public decimal Total => Diarias * Quantidade * ValorPadrao;
 
     private readonly List<ObservacaoItem> _observacoes = new();
     public IReadOnlyCollection<ObservacaoItem> Observacoes => _observacoes.AsReadOnly();
@@ -30,19 +35,19 @@ public class ItemDeCusto : AuditableEntity
     private readonly List<RegistroStatusItemDeCusto> _historicoStatus = new();
     public IReadOnlyCollection<RegistroStatusItemDeCusto> HistoricoStatus => _historicoStatus.AsReadOnly();
 
-    // ⚙️ Construtor vazio para EF Core
-    #pragma warning disable CS8618
+    // EF Core
+#pragma warning disable CS8618
     protected ItemDeCusto() { }
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 
-    // ⚙️ Construtor rico
     public ItemDeCusto(
         Guid projetoDeViagemId,
         CategoriaItemDeCusto categoria,
         string? descricao,
         int diarias,
         int quantidade,
-        decimal valorUnitario,
+        decimal valorPadrao,
+        TipoCalculoItem tipoCalculo,
         Guid? fornecedorId,
         string criadoPor)
     {
@@ -55,31 +60,33 @@ public class ItemDeCusto : AuditableEntity
         if (quantidade <= 0)
             throw new ArgumentException("Quantidade deve ser maior que zero.");
 
-        if (valorUnitario <= 0)
-            throw new ArgumentException("Valor unitário deve ser maior que zero.");
+        if (valorPadrao < 0)
+            throw new ArgumentException("Valor padrão não pode ser negativo.");
 
         ProjetoDeViagemId = projetoDeViagemId;
         Categoria = categoria;
         Descricao = descricao;
         Diarias = diarias;
         Quantidade = quantidade;
-        ValorUnitario = valorUnitario;
+        ValorPadrao = valorPadrao;
+        TipoCalculo = tipoCalculo;
         FornecedorId = fornecedorId;
+
         CriadoPor = criadoPor;
         DataCriacao = DateTime.UtcNow;
         StatusAtual = StatusItemDeCusto.Rascunho;
 
-        // Opcional: inicializa primeiro histórico
         _historicoStatus.Add(new RegistroStatusItemDeCusto
         {
             Status = StatusItemDeCusto.Rascunho,
             DataHora = DateTime.UtcNow,
-            UsuarioResponsavel = "Sistema",
+            UsuarioResponsavel = criadoPor ?? "Sistema",
             Justificativa = "Item criado em rascunho"
         });
     }
 
-    // ⚙️ Método de negócio para alterar status (já existente)
+    public decimal CalcularTotal() => Diarias * Quantidade * ValorPadrao;
+
     public void AlterarStatus(StatusItemDeCusto novoStatus, string usuario, string? justificativa = null)
     {
         if (StatusAtual != novoStatus)
@@ -95,25 +102,30 @@ public class ItemDeCusto : AuditableEntity
         }
     }
 
-    public decimal CalcularTotal() => Diarias * Quantidade * ValorUnitario;
-
     public void AtualizarDados(
-    CategoriaItemDeCusto? categoria,
-    string? descricao,
-    int? diarias,
-    int? quantidade,
-    decimal? valorUnitario,
-    Guid? fornecedorId,
-    string atualizadoPor)
+        CategoriaItemDeCusto? categoria,
+        string? descricao,
+        int? diarias,
+        int? quantidade,
+        decimal? valorPadrao,
+        TipoCalculoItem? tipoCalculo,
+        Guid? fornecedorId,
+        string atualizadoPor)
     {
         if (categoria.HasValue) Categoria = categoria.Value;
-        Descricao = descricao ?? Descricao;
-        Diarias = diarias ?? Diarias;
-        Quantidade = quantidade ?? Quantidade;
-        ValorUnitario = valorUnitario ?? ValorUnitario;
-        FornecedorId = fornecedorId;
+        if (!string.IsNullOrWhiteSpace(descricao)) Descricao = descricao;
+        if (diarias.HasValue) Diarias = diarias.Value;
+        if (quantidade.HasValue) Quantidade = quantidade.Value;
+        if (valorPadrao.HasValue)
+        {
+            if (valorPadrao.Value < 0)
+                throw new ArgumentException("Valor padrão não pode ser negativo.");
+            ValorPadrao = valorPadrao.Value;
+        }
+        if (tipoCalculo.HasValue) TipoCalculo = tipoCalculo.Value;
 
-        AtualizadoPor = atualizadoPor;
+        FornecedorId = fornecedorId;
+        AtualizadoPor = atualizadoPor ?? "Sistema";
         DataAtualizacao = DateTime.UtcNow;
     }
 
@@ -121,6 +133,5 @@ public class ItemDeCusto : AuditableEntity
     {
         AtualizadoPor = atualizadoPor;
         DataAtualizacao = DateTime.UtcNow;
-        // Se quiser: IsAtivo = false;
     }
 }

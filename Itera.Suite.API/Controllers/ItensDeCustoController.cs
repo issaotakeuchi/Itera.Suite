@@ -1,4 +1,5 @@
 ﻿using Itera.Suite.Application.Commands.ItensDeCusto;
+using Itera.Suite.Application.DTOs;
 using Itera.Suite.Application.Handlers.ItensDeCusto;
 using Itera.Suite.Application.Interfaces;
 using Itera.Suite.Domain.Interfaces;
@@ -13,17 +14,20 @@ public class ItensDeCustoController : ControllerBase
 {
     private readonly CriarItemDeCustoCommandHandler _criarHandler;
     private readonly AtualizarItemDeCustoCommandHandler _atualizarHandler;
+    private readonly AlterarStatusItemDeCustoHandler _alterarStatusHandler;
     private readonly IItemDeCustoRepository _repository; // Entity
     private readonly IItemDeCustoQuery _query;           // DTO
 
     public ItensDeCustoController(
         CriarItemDeCustoCommandHandler criarHandler,
         AtualizarItemDeCustoCommandHandler atualizarHandler,
+        AlterarStatusItemDeCustoHandler alterarStatusItemDeCustoHandler,
         IItemDeCustoRepository repository,
         IItemDeCustoQuery query)
     {
         _criarHandler = criarHandler;
         _atualizarHandler = atualizarHandler;
+        _alterarStatusHandler = alterarStatusItemDeCustoHandler;
         _repository = repository;
         _query = query;
     }
@@ -72,6 +76,25 @@ public class ItensDeCustoController : ControllerBase
         item.Inativar(atualizadoPor);
         await _repository.SalvarAlteracoesAsync();
 
+        return NoContent();
+    }
+
+    [HttpGet("projeto/{projetoId}")]
+    public async Task<IActionResult> GetPorProjeto(Guid projetoId)
+    {
+        var itens = await _query.ListarPorProjetoAsync(projetoId);
+        return Ok(itens);
+    }
+
+    [HttpPut("{id}/status")]
+    public async Task<IActionResult> AlterarStatus(Guid id, [FromBody] AlterarStatusItemDeCustoCommand command)
+    {
+        if (id != command.Id)
+            return BadRequest("Id da rota não confere com o payload.");
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "Sistema";
+
+        await _alterarStatusHandler.HandleAsync(command, userId);
         return NoContent();
     }
 }

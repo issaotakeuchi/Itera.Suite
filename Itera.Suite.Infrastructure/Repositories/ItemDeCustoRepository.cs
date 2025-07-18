@@ -44,7 +44,7 @@ public class ItemDeCustoRepository : IItemDeCustoRepository, IItemDeCustoQuery
                 Descricao = i.Descricao,
                 Diarias = i.Diarias,
                 Quantidade = i.Quantidade,
-                ValorUnitario = i.ValorUnitario,
+                ValorUnitario = i.ValorPadrao,
                 Total = i.Total,
                 StatusAtual = i.StatusAtual.ToString(),
                 FornecedorNome = i.Fornecedor != null ? i.Fornecedor.Nome : null,
@@ -62,10 +62,29 @@ public class ItemDeCustoRepository : IItemDeCustoRepository, IItemDeCustoQuery
                 Descricao = i.Descricao,
                 Diarias = i.Diarias,
                 Quantidade = i.Quantidade,
-                ValorUnitario = i.ValorUnitario,
+                ValorUnitario = i.ValorPadrao,
                 Total = i.Total,
                 StatusAtual = i.StatusAtual.ToString(),
                 FornecedorNome = i.Fornecedor != null ? i.Fornecedor.Nome : null,
                 ProjetoNome = i.ProjetoDeViagem.NomeInterno
             }).FirstOrDefaultAsync();
+
+    public async Task<IEnumerable<ItemDeCustoDto>> ListarPorProjetoAsync(Guid projetoId)
+    => await _context.ItensDeCusto
+        .AsNoTracking()
+        .Where(i => i.ProjetoDeViagemId == projetoId)
+        .Select(i => new ItemDeCustoDto
+        {
+            Id = i.Id,
+            Categoria = i.Categoria.ToString(),
+            Descricao = i.Descricao,
+            Diarias = i.Diarias,
+            Quantidade = i.Quantidade,
+            ValorUnitario = i.ValorPadrao,
+            Total = i.Total,
+            StatusAtual = i.StatusAtual.ToString(),
+            FornecedorNome = i.Fornecedor != null ? i.Fornecedor.Nome : null,
+            ProjetoNome = i.ProjetoDeViagem.NomeInterno
+        })
+        .ToListAsync();
 }

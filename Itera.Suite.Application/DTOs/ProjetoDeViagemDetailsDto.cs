@@ -14,6 +14,6 @@ public class ProjetoDeViagemDetailsDto
     public string ClienteNome { get; set; } = null!;
     public decimal ValorTotalProvisionado { get; set; }
 
-    public List<ItemDeCustoDto> ItensDeCusto { get; set; } = new();
+    public BaseDeCalculoDto? BaseConfirmada { get; set; }
+    public List<BaseDeCalculoResumoDto> OutrasBases { get; set; } = new();
 }
-

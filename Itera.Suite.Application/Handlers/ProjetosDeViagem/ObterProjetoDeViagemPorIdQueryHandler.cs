@@ -21,6 +21,9 @@ public class ObterProjetoDeViagemPorIdQueryHandler
         var projeto = await _repository.ObterPorIdComItensAsync(request.Id)
             ?? throw new InvalidOperationException("Projeto não encontrado.");
 
+        var baseConfirmada = projeto.Bases.FirstOrDefault(b => b.Confirmada);
+        var outrasBases = projeto.Bases.Where(b => !b.Confirmada).ToList();
+
         return new ProjetoDeViagemDetailsDto
         {
             Id = projeto.Id,
@@ -33,14 +36,42 @@ public class ObterProjetoDeViagemPorIdQueryHandler
             DataSaida = projeto.DataSaida,
             DataRetorno = projeto.DataRetorno,
             ClienteNome = projeto.Cliente.Nome,
-            ValorTotalProvisionado = projeto.CalcularValorTotalProvisionado(),
-            ItensDeCusto = projeto.ItensDeCusto.Select(item => new ItemDeCustoDto
+            ValorTotalProvisionado = baseConfirmada?.TotalComMarkup ?? 0,
+
+            BaseConfirmada = baseConfirmada is not null
+                ? new BaseDeCalculoDto
+                {
+                    Id = baseConfirmada.Id,
+                    Nome = baseConfirmada.Nome,
+                    Markup = baseConfirmada.Markup,
+                    QtdAlunos = baseConfirmada.QtdAlunos,
+                    QtdProfessores = baseConfirmada.QtdProfessores,
+                    QtdGuias = baseConfirmada.QtdGuias,
+                    QtdMotoristas = baseConfirmada.QtdMotoristas,
+                    MotoristaPermanece = baseConfirmada.MotoristaPermanece,
+                    Total = baseConfirmada.Total,
+                    TotalComMarkup = baseConfirmada.TotalComMarkup,
+                    Itens = baseConfirmada.Itens.Select(i => new ItemDeCustoAplicadoDto
+                    {
+                        Id = i.Id,
+                        Subtipo = i.Subtipo,
+                        QuantidadeTotal = i.QuantidadeTotal,
+                        QuantidadeCortesia = i.QuantidadeCortesia,
+                        ValorEditado = i.ValorEditado ?? i.ItemDeCusto.ValorPadrao,
+                        Total = i.Total,
+                        Categoria = i.ItemDeCusto.Categoria.ToString(),
+                        Descricao = i.ItemDeCusto.Descricao,
+                        Fornecedor = i.ItemDeCusto.Fornecedor?.Nome
+                    }).ToList()
+                }
+                : null,
+
+            OutrasBases = outrasBases.Select(b => new BaseDeCalculoResumoDto
             {
-                Id = item.Id,
-                Descricao = item.Descricao,
-                FornecedorNome = item.Fornecedor.Nome,
-                ValorTotal = item.Total,
-                Status = item.StatusAtual.ToString()
+                Id = b.Id,
+                Nome = b.Nome,
+                Total = b.TotalComMarkup,
+                Confirmada = b.Confirmada
             }).ToList()
         };
     }
